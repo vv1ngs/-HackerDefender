@@ -13,16 +13,28 @@ public class Challenge {
 
     private Boolean status;
 
+    private String memoryLimit;
+
+    private Double cupLimit;
+
+    private String dockerImage;
+
+    private Integer port;
+
     private Date createTime;
 
     private Date updateTime;
 
-    public Challenge(Integer id, String name, String detail, Integer golden, Boolean status, Date createTime, Date updateTime) {
+    public Challenge(Integer id, String name, String detail, Integer golden, Boolean status, String memoryLimit, Double cupLimit, String dockerImage, Integer port, Date createTime, Date updateTime) {
         this.id = id;
         this.name = name;
         this.detail = detail;
         this.golden = golden;
         this.status = status;
+        this.memoryLimit = memoryLimit;
+        this.cupLimit = cupLimit;
+        this.dockerImage = dockerImage;
+        this.port = port;
         this.createTime = createTime;
         this.updateTime = updateTime;
     }
@@ -69,6 +81,38 @@ public class Challenge {
 
     public void setStatus(Boolean status) {
         this.status = status;
+    }
+
+    public String getMemoryLimit() {
+        return memoryLimit;
+    }
+
+    public void setMemoryLimit(String memoryLimit) {
+        this.memoryLimit = memoryLimit == null ? null : memoryLimit.trim();
+    }
+
+    public Double getCupLimit() {
+        return cupLimit;
+    }
+
+    public void setCupLimit(Double cupLimit) {
+        this.cupLimit = cupLimit;
+    }
+
+    public String getDockerImage() {
+        return dockerImage;
+    }
+
+    public void setDockerImage(String dockerImage) {
+        this.dockerImage = dockerImage == null ? null : dockerImage.trim();
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
     }
 
     public Date getCreateTime() {

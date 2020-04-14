@@ -28,12 +28,12 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
     <insert id="insert" parameterType="org.hackDefender.pojo.User">
-    insert into hackerdefender_user (id, username, password,
-      email, phone, role,
+    insert into hackerdefender_user (id, username, password, 
+      email, phone, role, 
       golden_count, create_time, update_time
       )
-    values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
-      #{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{role,jdbcType=INTEGER},
+    values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{role,jdbcType=INTEGER}, 
       #{goldenCount,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, now()
       )
   </insert>
@@ -140,11 +140,11 @@
       update_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>
-    <select id="checkUsername" resultType="int" parameterType="string">
+    <select id="checkUsername" parameterType="string" resultType="int">
         select count(1) from hackerdefender_user
         where username= #{username}
     </select>
-    <select id="selectLogin" resultMap="BaseResultMap" parameterType="map">
+    <select id="selectLogin" parameterType="map" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from hackerdefender_user

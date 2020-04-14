@@ -24,9 +24,9 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
     <insert id="insert" parameterType="org.hackDefender.pojo.ChallengeCategory">
-    insert into challenge_category (id, category_id, challenge_id,
+    insert into challenge_category (id, category_id, challenge_id, 
       create_time, update_time)
-    values (#{id,jdbcType=INTEGER}, #{categoryId,jdbcType=INTEGER}, #{challengeId,jdbcType=INTEGER},
+    values (#{id,jdbcType=INTEGER}, #{categoryId,jdbcType=INTEGER}, #{challengeId,jdbcType=INTEGER}, 
       #{createTime,jdbcType=TIMESTAMP}, now())
   </insert>
     <insert id="insertSelective" parameterType="org.hackDefender.pojo.ChallengeCategory">
