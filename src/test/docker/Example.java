@@ -1,6 +1,11 @@
 package docker;
 
 import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.command.CreateNetworkResponse;
+import com.github.dockerjava.api.model.*;
+import com.github.dockerjava.core.DockerClientBuilder;
+import com.google.common.collect.Lists;
+import org.hackDefender.util.PropertiesUtil;
 
 /**
  * @author vvings
@@ -9,30 +14,47 @@ import com.github.dockerjava.api.DockerClient;
 public class Example {
 
     public static DockerClient connectDocker() {
-        DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
-                .withDockerHost("tcp://12.0.0.1:2376")
-                .withDockerTlsVerify(true)
-                .withDockerCertPath("/home/user/.docker")
-                .withRegistryUsername(registryUser)
-                .withRegistryPassword(registryPass)
-                .withRegistryEmail(registryMail)
-                .withRegistryUrl(registryUrl)
-                .build();
-
-// using jaxrs/jersey i
-// mplementation here (netty impl is also available)
-        DockerCmdExecFactory dockerCmdExecFactory = new JerseyDockerCmdExecFactory()
-                .withReadTimeout(1000)
-                .withConnectTimeout(1000).w;
-
-        DockerClient dockerClient = DockerClientBuilder.getInstance(config)
-                .withDockerCmdExecFactory(dockerCmdExecFactory)
-                .build();
-
+        DockerClient dockerClient = DockerClientBuilder.getInstance(PropertiesUtil.
+                getProperty("docker_APIUrl", "tcp://127.0.0.1:2375")).build();
         return dockerClient;
     }
 
     public static void main(String[] args) {
+
+       /* DockerClient dockerClient = connectDocker();
+        ExposedPort tcp80 = ExposedPort.tcp(80);
+        Ports portBindings = new Ports();
+        portBindings.bind(tcp80, Ports.Binding.bindPort(8088));
+        Map<String, String> map = Maps.newHashMap();
+        map.put("m", "128m");
+        map.put("cpus", "0.25");
+        dockerClient.createNetworkCmd().withName("test").withOptions(map).exec();
+        CreateContainerResponse container = dockerClient.createContainerCmd("ctftraining/qwb_supersqli")
+                .withName("test")
+                .withHostConfig(newHostConfig().withPortBindings(portBindings).withMemory((long) (128 * 1024 * 1024)).withCpusetCpus()).
+                        withExposedPorts(tcp80).withAliases().exec();
+        dockerClient.startContainerCmd(container.getId()).exec();
+        TaskSpec taskSpec = new TaskSpec().withResources(new ResourceRequirements().withLimits(new ResourceSpecs().withNanoCPUs(1)))*/
+        Long cuplimit = new Long((long) (1E9 * 0.5));
+        Long melimit = new Long((long) 128 * 1024 * 1024);
         DockerClient dockerClient = connectDocker();
+        CreateNetworkResponse network = dockerClient.createNetworkCmd().
+                withName("frp_test").
+                withDriver("overlay").
+                withIpam(new Network.Ipam().withConfig(new Network.Ipam.Config().withSubnet("172.0.0.1")).
+                        withDriver("default")).
+                withAttachable(true).exec();
+
+
+        TaskSpec taskSpec = new TaskSpec().withContainerSpec(new ContainerSpec().withImage("ctftraining/qwb_2019_supersqli"))
+                .withResources(new ResourceRequirements().withLimits(new ResourceSpecs().withNanoCPUs(cuplimit).withMemoryBytes(melimit)))
+                .withPlacement(new ServicePlacement().withConstraints(Lists.<String>newArrayList("")));
+
+        ServiceSpec serviceSpec = new ServiceSpec().withName("testService").
+                withNetworks(Lists.newArrayList(new NetworkAttachmentConfig().withTarget("frp_container")))
+                .withEndpointSpec(new EndpointSpec().withMode(EndpointResolutionMode.DNSRR))
+                .withTaskTemplate(taskSpec)
+                .withMode(new ServiceModeConfig().withReplicated(new ServiceReplicatedModeOptions().withReplicas(1)));
+        dockerClient.createServiceCmd(serviceSpec).exec();
     }
 }
