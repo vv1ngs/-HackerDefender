@@ -151,4 +151,15 @@
         where username= #{username}
         and password=#{password}
     </select>
+
+<!--    <insert id="insert" parameterType="org.hackDefender.pojo.User">-->
+<!--        insert into hackerdefender_user (username, password,-->
+<!--          email, phone, role,-->
+<!--          golden_count, create_time, update_time-->
+<!--          )-->
+<!--        values (#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},-->
+<!--          #{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{role,jdbcType=INTEGER},-->
+<!--          #{goldenCount,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, now()-->
+<!--          )-->
+<!--    </insert>-->
 </mapper>

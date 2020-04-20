@@ -8,5 +8,10 @@ import org.hackDefender.pojo.User;
  * @version 2020/4/13 23:42
  */
 public interface UserService {
-    ServerResponse<User> login(String username, String password);
+
+    ServerResponse checkUsername(String username);
+
+    ServerResponse<String> insertUser(User user);
+
+    ServerResponse<User> selectUser(String username, String password);
 }
