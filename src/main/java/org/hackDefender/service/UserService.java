@@ -14,4 +14,6 @@ public interface UserService {
     ServerResponse<String> insertUser(User user);
 
     ServerResponse<User> selectUser(String username, String password);
+
+    User updateUserInfo(User user);
 }

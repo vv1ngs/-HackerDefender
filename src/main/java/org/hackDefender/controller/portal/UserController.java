@@ -136,5 +136,89 @@ public class UserController {
         return responseMessage;
     }
 
+    /**
+     * 用户签到，留着没写
+     *
+     * @param session
+     * @return
+     */
+    public ServerResponse signIn(HttpSession session){
+
+        ServerResponse responseMessage = null;
+
+        return null;
+    }
+
+
+    /**
+     * 更改用户信息
+     *
+     * @param newUsername   新的username
+     * @param newEmail      新的email
+     * @param newPhone      新的phone
+     * @param session       传入session
+     * @return
+     */
+    @RequestMapping(value = "/updateInfo", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<User> updateUserInfo(@RequestParam("newUsername") String newUsername,
+                                                 @RequestParam("newEmail") String newEmail,
+                                                 @RequestParam("newPhone") String newPhone,
+                                                 HttpSession session){
+
+        ServerResponse<User> responseMessage = null;
+
+        //用户名检测通过
+        boolean usernamePass = false;
+
+        //获得user
+        User user = (User)session.getAttribute(Const.CURRENT_USER);
+
+        if (user != null){
+
+            //新的username
+            if ((!user.getUsername().equals(newUsername)) && (newUsername != null) && (!newUsername.equals(""))){
+
+                ServerResponse<String> checkUsername = userService.checkUsername(newUsername);
+                usernamePass = checkUsername.isSuccess();
+
+                if (usernamePass){
+                    user.setUsername(newUsername);
+                }else {
+                    //用户名已存在返回旧的 user 对象
+                    responseMessage = ServerResponse.createBySuccess(Constant.USERNAME_EXIST, user);
+                }
+            }
+
+            if (usernamePass){
+
+                //新的email不能为空字符串，和原来一样不变
+                if ((!user.getEmail().equals(newEmail)) && (newEmail != null) && (!newEmail.equals(""))){
+
+                    user.setEmail(newEmail);
+                }
+
+                //新的phone不能为空字符串，和原来一样不变
+                if ((!user.getPhone().equals(newPhone)) && (newPhone != null) && (!newPhone.equals(""))){
+
+                    user.setPhone(newPhone);
+                }
+
+                //更新user信息并返回新的user
+                User newUser = userService.updateUserInfo(user);
+                //更新user到session
+                session.setAttribute(Const.CURRENT_USER, newUser);
+
+                responseMessage = ServerResponse.createBySuccess(Constant.USER_INFO_UPDATE_SUCCESS, newUser);
+            }
+
+        }else {
+
+            //未登陆直接返回 null data。
+            responseMessage = ServerResponse.createBySuccess(Constant.NOT_LOGIN, null);
+        }
+
+        return responseMessage;
+    }
 
 }

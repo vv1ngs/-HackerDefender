@@ -131,7 +131,6 @@
     <update id="updateByPrimaryKey" parameterType="org.hackDefender.pojo.User">
         update hackerdefender_user
         set username = #{username,jdbcType=VARCHAR},
-            password = #{password,jdbcType=VARCHAR},
             email = #{email,jdbcType=VARCHAR},
             phone = #{phone,jdbcType=VARCHAR},
             role = #{role,jdbcType=INTEGER},

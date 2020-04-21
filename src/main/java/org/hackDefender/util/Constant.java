@@ -38,4 +38,15 @@ public class Constant {
      * 登录成功
      */
     public static final String LOGIN_SUCCESS = "登录成功";
+
+    /**
+     * 未登陆
+     */
+    public static final String NOT_LOGIN = "未登陆";
+
+    /**
+     * 用户信息修改成功
+     */
+    public static final String USER_INFO_UPDATE_SUCCESS = "信息修改成功";
+
 }

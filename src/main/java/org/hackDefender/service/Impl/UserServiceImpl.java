@@ -113,5 +113,28 @@ public class UserServiceImpl implements UserService {
         return responseMessage;
     }
 
+    /**
+     * 更新用户信息，并返回更新后的 user 对象
+     *
+     * @param user 已更改好信息的 user
+     * @return
+     */
+    @Override
+    public User updateUserInfo(User user) {
+
+        User newUser = null;
+
+        //更新用户信息，不包括密码
+        int result = userMapper.updateByPrimaryKey(user);
+
+        if (result >= 1){
+            //重新获得该用户信息
+            newUser = userMapper.selectByPrimaryKey(user.getId());
+
+            newUser.setPassword(null);
+        }
+        return newUser;
+    }
+
 
 }
