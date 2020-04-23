@@ -9,4 +9,12 @@ import org.hackDefender.pojo.User;
  */
 public interface UserService {
     ServerResponse<User> login(String username, String password);
+
+    ServerResponse<User> getInformation(Integer id);
+
+    ServerResponse<String> register(User user);
+
+    ServerResponse<User> updateUserInfo(User user);
+
+    ServerResponse<String> resetPassword(User user, String passwordOld, String passwordNew);
 }

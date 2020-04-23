@@ -34,6 +34,7 @@ CREATE TABLE `hackerdefender_category`
 CREATE TABLE `hackerdefender_challenge`
 (
     `id`           int(11)     NOT NULL AUTO_INCREMENT COMMENT 'Id',
+    `category_id`  int(11)     NOT NULL COMMENT '分类id',
     `name`         varchar(50) NOT NULL COMMENT '挑战名称',
     `detail`       text COMMENT '挑战具体描述',
     `golden`       int(4)      NOT NULL COMMENT '该题值多少金币',
@@ -49,30 +50,18 @@ CREATE TABLE `hackerdefender_challenge`
   DEFAULT CHARSET = utf8;
 
 
-CREATE TABLE `challenge_category`
-(
-    `id`           int(11)  NOT NULL AUTO_INCREMENT COMMENT 'Id',
-    `category_id`  int(11)  NOT NULL COMMENT '类别Id',
-    `challenge_id` int(11)  NOT NULL COMMENT '题目Id',
-    `create_time`  datetime NOT NULL COMMENT '创建时间',
-    `update_time`  datetime NOT NULL COMMENT '最后一次更新时间',
-    PRIMARY KEY (`id`)
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
-
-
 
 CREATE TABLE `challenge_container`
 (
-    `id`           int(11)  NOT NULL AUTO_INCREMENT COMMENT 'Id',
-    `user_id`      int(11)  NOT NULL COMMENT '用户ID',
-    `challenge_id` int(11)  NOT NULL COMMENT '题目Id',
-    `renew_count`  int(11)  NOT NULL COMMENT '用户重启次数',
-    `uuid`         int(11)  NOT NULL COMMENT '一个标书符',
-    `port`         int(11)  NOT NULL COMMENT '映射端口',
+    `id`           int(11)     NOT NULL AUTO_INCREMENT COMMENT 'Id',
+    `user_id`      int(11)     NOT NULL COMMENT '用户ID',
+    `challenge_id` int(11)     NOT NULL COMMENT '题目Id',
+    `renew_count`  int(11)     NOT NULL COMMENT '用户重启次数',
+    `uuid`         varchar(50) NOT NULL COMMENT 'uuid标识符',
+    `port`         int(11)     NOT NULL COMMENT '映射端口',
     `status`       tinyint(1) DEFAULT '1' COMMENT '容器状态 1-正常 0-下线',
-    `create_time`  datetime NOT NULL COMMENT '创建时间',
-    `update_time`  datetime NOT NULL COMMENT '最后一次更新时间',
+    `create_time`  datetime    NOT NULL COMMENT '创建时间',
+    `update_time`  datetime    NOT NULL COMMENT '最后一次更新时间',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;

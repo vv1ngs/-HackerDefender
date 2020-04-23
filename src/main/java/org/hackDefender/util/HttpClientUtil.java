@@ -12,6 +12,10 @@ import org.apache.http.impl.client.HttpClients;
 
 import java.io.IOException;
 
+/**
+ * @author vvings
+ * @version 2020/4/17 11:04
+ */
 @Slf4j
 public class HttpClientUtil {
     public static void getRequest(String url) {

@@ -23,4 +23,8 @@ public class Const {
         String CLOSE_ORDER_TASK_LOCK = "CLOSE_ORDER_TASK_LOCK";
     }
 
+    public interface RedisCacheExtime {
+        int REDIS_SESSION_EXTIME = 60 * 30;//单位秒
+    }
+
 }

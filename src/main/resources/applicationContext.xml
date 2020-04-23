@@ -11,8 +11,11 @@
     <context:component-scan base-package="org.hackDefender" annotation-config="true">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
+
     <task:annotation-driven/>
+
     <context:property-placeholder location="classpath:datasource.properties"/>
+
     <aop:aspectj-autoproxy/>
 
 

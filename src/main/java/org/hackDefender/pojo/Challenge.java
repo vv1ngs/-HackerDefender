@@ -5,6 +5,8 @@ import java.util.Date;
 public class Challenge {
     private Integer id;
 
+    private Integer categoryId;
+
     private String name;
 
     private String detail;
@@ -15,7 +17,7 @@ public class Challenge {
 
     private String memoryLimit;
 
-    private Double cupLimit;
+    private Long cupLimit;
 
     private String dockerImage;
 
@@ -25,8 +27,9 @@ public class Challenge {
 
     private Date updateTime;
 
-    public Challenge(Integer id, String name, String detail, Integer golden, Boolean status, String memoryLimit, Double cupLimit, String dockerImage, Integer port, Date createTime, Date updateTime) {
+    public Challenge(Integer id, Integer categoryId, String name, String detail, Integer golden, Boolean status, String memoryLimit, Long cupLimit, String dockerImage, Integer port, Date createTime, Date updateTime) {
         this.id = id;
+        this.categoryId = categoryId;
         this.name = name;
         this.detail = detail;
         this.golden = golden;
@@ -37,6 +40,14 @@ public class Challenge {
         this.port = port;
         this.createTime = createTime;
         this.updateTime = updateTime;
+    }
+
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
     }
 
     public Challenge() {
@@ -91,11 +102,11 @@ public class Challenge {
         this.memoryLimit = memoryLimit == null ? null : memoryLimit.trim();
     }
 
-    public Double getCupLimit() {
+    public Long getCupLimit() {
         return cupLimit;
     }
 
-    public void setCupLimit(Double cupLimit) {
+    public void setCupLimit(Long cupLimit) {
         this.cupLimit = cupLimit;
     }
 

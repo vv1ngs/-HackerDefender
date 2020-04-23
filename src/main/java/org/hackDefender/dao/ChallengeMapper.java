@@ -14,4 +14,6 @@ public interface ChallengeMapper {
     int updateByPrimaryKeySelective(Challenge record);
 
     int updateByPrimaryKey(Challenge record);
+
+    int checkId(Integer challengeId);
 }

@@ -1,5 +1,9 @@
 package org.hackDefender.util;
 
+/**
+ * @author vvings
+ * @version 2020/4/17 11:04
+ */
 public class FrpUtil {
     private static final String templateURl = new StringBuilder().append("http://").append(PropertiesUtil.getProperty("frpc_admin_url")).append(":")
             .append(PropertiesUtil.getProperty("frpc_admin_port")).append("/api/").toString();
@@ -18,9 +22,9 @@ public class FrpUtil {
             "remote_port = %s\n" +
             "use_compression = true";
 
-    public static String rewriteFrp(int userId, int containUUid, int challengePort, int ContainerPort) {
+    public static String rewriteFrp(String localIp, int challengePort, String ContainerPort) {
         //String localIp = String.valueOf(userId) + "-" + String.valueOf(containUUid);
-        String localIp = "127.0.0.1";
+        //localIp = "127.0.0.1";
         String localPort = String.valueOf(challengePort);
         String remotePort = String.valueOf(ContainerPort);
         String newBuffer = PropertiesUtil.getProperty("frpc_template") + String.format(template, localIp, localIp, localPort, remotePort, localIp, localIp, localPort, remotePort);
