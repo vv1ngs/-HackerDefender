@@ -11,7 +11,7 @@ public class Container {
 
     private Integer renewCount;
 
-    private Integer uuid;
+    private String uuid;
 
     private Integer port;
 
@@ -21,7 +21,7 @@ public class Container {
 
     private Date updateTime;
 
-    public Container(Integer id, Integer userId, Integer challengeId, Integer renewCount, Integer uuid, Integer port, Boolean status, Date createTime, Date updateTime) {
+    public Container(Integer id, Integer userId, Integer challengeId, Integer renewCount, String uuid, Integer port, Boolean status, Date createTime, Date updateTime) {
         this.id = id;
         this.userId = userId;
         this.challengeId = challengeId;
@@ -69,11 +69,11 @@ public class Container {
         this.renewCount = renewCount;
     }
 
-    public Integer getUuid() {
+    public String getUuid() {
         return uuid;
     }
 
-    public void setUuid(Integer uuid) {
+    public void setUuid(String uuid) {
         this.uuid = uuid;
     }
 

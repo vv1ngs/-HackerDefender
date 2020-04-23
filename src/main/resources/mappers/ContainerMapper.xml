@@ -7,7 +7,7 @@
             <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
             <arg column="challenge_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
             <arg column="renew_count" jdbcType="INTEGER" javaType="java.lang.Integer"/>
-            <arg column="uuid" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="uuid" jdbcType="VARCHAR" javaType="java.lang.String"/>
             <arg column="port" jdbcType="INTEGER" javaType="java.lang.Integer"/>
             <arg column="status" jdbcType="BIT" javaType="java.lang.Boolean"/>
             <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
@@ -33,7 +33,7 @@
       status, create_time, update_time
       )
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{challengeId,jdbcType=INTEGER}, 
-      #{renewCount,jdbcType=INTEGER}, #{uuid,jdbcType=INTEGER}, #{port,jdbcType=INTEGER}, 
+      #{renewCount,jdbcType=INTEGER}, #{uuid,jdbcType=VARCHAR}, #{port,jdbcType=INTEGER},
       #{status,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, now()
       )
   </insert>
@@ -82,7 +82,7 @@
                 #{renewCount,jdbcType=INTEGER},
             </if>
             <if test="uuid != null">
-                #{uuid,jdbcType=INTEGER},
+                #{uuid,jdbcType=VARCHAR},
             </if>
             <if test="port != null">
                 #{port,jdbcType=INTEGER},
@@ -111,7 +111,7 @@
                 renew_count = #{renewCount,jdbcType=INTEGER},
             </if>
             <if test="uuid != null">
-                uuid = #{uuid,jdbcType=INTEGER},
+                uuid = #{uuid,jdbcType=VARCHAR},
             </if>
             <if test="port != null">
                 port = #{port,jdbcType=INTEGER},
@@ -133,11 +133,42 @@
     set user_id = #{userId,jdbcType=INTEGER},
       challenge_id = #{challengeId,jdbcType=INTEGER},
       renew_count = #{renewCount,jdbcType=INTEGER},
-      uuid = #{uuid,jdbcType=INTEGER},
+      uuid = #{uuid,jdbcType=VARCHAR},
       port = #{port,jdbcType=INTEGER},
       status = #{status,jdbcType=BIT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = now()
     where id = #{id,jdbcType=INTEGER}
   </update>
+    <select id="selectByUid" parameterType="int" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from challenge_container
+        where user_id=#{userId}
+    </select>
+    <select id="selectByTime" parameterType="date" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from challenge_container
+        where
+        <![CDATA[ create_time <= #{date}]]>
+    </select>
+    <select id="selectByUidAndCId" parameterType="int" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from challenge_container
+        where user_id=#{userId}
+        and challenge_id=#{challengeId}
+    </select>
+    <select id="checkUid" resultType="int" parameterType="int">
+        select
+        count(1)
+        from challenge_container
+        where user_id=#{userId}
+    </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from challenge_container
+    </select>
 </mapper>

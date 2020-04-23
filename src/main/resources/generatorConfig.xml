@@ -80,9 +80,6 @@
                selectByExampleQueryId="false">
             <columnOverride column="detail" jdbcType="VARCHAR"/>
         </table>
-        <table tableName="challenge_category" domainObjectName="ChallengeCategory" enableCountByExample="false"
-               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
-               selectByExampleQueryId="false"></table>
 
         <!-- geelynote mybatis插件的搭建 -->
     </context>

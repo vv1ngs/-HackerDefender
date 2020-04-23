@@ -25,10 +25,10 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
     <insert id="insert" parameterType="org.hackDefender.pojo.Category">
-    insert into hackerdefender_category (id, parent_id, name, 
+    insert into hackerdefender_category (id, category_id,parent_id, name,
       sort_order, create_time, update_time
       )
-    values (#{id,jdbcType=INTEGER}, #{parentId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{parentId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
       #{sortOrder,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, now()
       )
   </insert>
@@ -38,6 +38,7 @@
             <if test="id != null">
                 id,
             </if>
+
             <if test="parentId != null">
                 parent_id,
             </if>
@@ -105,4 +106,10 @@
       update_time =now()
     where id = #{id,jdbcType=INTEGER}
   </update>
+    <select id="selectChildrenByCategoryById" parameterType="int" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from hackerdefender_category
+        where id=#{categoryId}
+    </select>
 </mapper>

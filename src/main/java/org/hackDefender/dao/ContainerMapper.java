@@ -1,6 +1,9 @@
 package org.hackDefender.dao;
 
+import org.apache.ibatis.annotations.Param;
 import org.hackDefender.pojo.Container;
+
+import java.util.List;
 
 public interface ContainerMapper {
     int deleteByPrimaryKey(Integer id);
@@ -14,4 +17,14 @@ public interface ContainerMapper {
     int updateByPrimaryKeySelective(Container record);
 
     int updateByPrimaryKey(Container record);
+
+    Container selectByUid(Integer userId);
+
+    List<Container> selectByTime(@Param("date") String date);
+
+    Container selectByUidAndCId(@Param("userId") Integer userId, @Param("challengeId") Integer challengeId);
+
+    int checkUid(Integer userId);
+
+    List<Container> selectAll();
 }

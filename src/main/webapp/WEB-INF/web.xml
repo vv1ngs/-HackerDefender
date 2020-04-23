@@ -23,7 +23,14 @@
         <filter-name>characterEncodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-
+    <filter>
+        <filter-name>sessionExpire</filter-name>
+        <filter-class>org.hackDefender.fillter.SessionExpireFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>sessionExpire</filter-name>
+        <url-pattern>*.do</url-pattern>
+    </filter-mapping>
     <listener>
         <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
     </listener>
