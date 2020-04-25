@@ -34,7 +34,7 @@
       )
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{challengeId,jdbcType=INTEGER}, 
       #{renewCount,jdbcType=INTEGER}, #{uuid,jdbcType=VARCHAR}, #{port,jdbcType=INTEGER},
-      #{status,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, now()
+      #{status,jdbcType=BIT}, now(), now()
       )
   </insert>
     <insert id="insertSelective" parameterType="org.hackDefender.pojo.Container">
@@ -146,7 +146,7 @@
         from challenge_container
         where user_id=#{userId}
     </select>
-    <select id="selectByTime" parameterType="date" resultMap="BaseResultMap">
+    <select id="selectByTime" parameterType="string" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from challenge_container

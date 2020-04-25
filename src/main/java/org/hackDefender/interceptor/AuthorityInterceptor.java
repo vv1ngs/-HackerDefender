@@ -1,8 +1,10 @@
 package org.hackDefender.interceptor;
 
+import com.google.common.collect.Maps;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.hackDefender.common.Const;
-import org.hackDefender.common.ServerResponse;
+import org.hackDefender.common.ResponseCode;
 import org.hackDefender.pojo.User;
 import org.hackDefender.util.CookieUtil;
 import org.hackDefender.util.JacksonUtil;
@@ -22,6 +24,7 @@ import java.util.Map;
  * @author vvings
  * @version 2020/4/21 11:08
  */
+@Slf4j
 public class AuthorityInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -43,6 +46,11 @@ public class AuthorityInterceptor implements HandlerInterceptor {
             }
             requestParamBuffer.append(mapKey).append("=").append(mapValue);
         }
+        if (StringUtils.equals(classname, "UserManageController") && StringUtils.equals(method, "login")) {
+            log.info("权限拦截器拦截到请求,className:{},methodName:{}", classname, method);
+            //如果是拦截到登录请求，不打印参数，因为参数里面有密码，全部会打印到日志中，防止日志泄露
+            return true;
+        }
         User user = null;
         String loginToken = CookieUtil.readLoginToken(request);
         if (StringUtils.isNotEmpty(loginToken)) {
@@ -55,9 +63,17 @@ public class AuthorityInterceptor implements HandlerInterceptor {
             response.setContentType("application/json;charset=UTF-8");
             PrintWriter out = response.getWriter();
             if (user == null) {
-                out.print(JacksonUtil.ObjToString(ServerResponse.createByErrorMessage("拦截器拦截，用户未登录")));
+                Map resultMap = Maps.newHashMap();
+                resultMap.put("success", false);
+                resultMap.put("msg", ResponseCode.NEED_LOGIN.getDesc());
+                resultMap.put("status", ResponseCode.NEED_LOGIN.getCode());
+                out.print(JacksonUtil.ObjToString(resultMap));
             } else {
-                out.print(JacksonUtil.ObjToString(ServerResponse.createByErrorMessage("拦截器拦截，用户无权限操作")));
+                Map resultMap = Maps.newHashMap();
+                resultMap.put("success", false);
+                resultMap.put("msg", ResponseCode.PERMISSION_DENIED.getDesc());
+                resultMap.put("status", ResponseCode.PERMISSION_DENIED.getCode());
+                out.print(JacksonUtil.ObjToString(resultMap));
             }
             out.flush();
             out.close();

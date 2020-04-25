@@ -22,7 +22,9 @@ public interface UserMapper {
 
     int checkEmail(String email);
 
-    int checkPhone(String phone);
+    int checkPhoneByUserId(@Param("phone") String phone, @Param("id") Integer id);
 
-    int checkPassword(String md5password, Integer id);
+    int checkPassword(@Param("md5password") String md5password, @Param("id") Integer id);
+
+    int checkEmailByUserId(@Param("email") String email, @Param("id") Integer id);
 }

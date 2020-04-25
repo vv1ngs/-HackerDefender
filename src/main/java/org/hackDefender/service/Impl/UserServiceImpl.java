@@ -28,15 +28,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ServerResponse<User> login(String username, String password) {
-        if (username == null || password == null) {
-            return ServerResponse.createByErrorMessage("参数错误");
+        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
+            return ServerResponse.createByErrorCode(ResponseCode.ILLEGAL_ARGUMENT.getCode(), "参数缺少");
         }
         int resultCount = userMapper.checkUsername(username);
         if (resultCount == 0) {
             return ServerResponse.createByErrorMessage("用户名不存在");
         }
-        //String MD5password = MD5Util.MD5EncodeUtf8(password);
-        User user = userMapper.selectLogin(username, password);
+        String MD5password = MD5Util.MD5EncodeUtf8(password);
+        User user = userMapper.selectLogin(username, MD5password);
         if (user == null) {
             return ServerResponse.createByErrorMessage("密码错误");
         }
@@ -47,14 +47,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ServerResponse<String> register(User user) {
+        if (StringUtils.isEmpty(user.getUsername()) || StringUtils.isEmpty(user.getPassword())) {
+            return ServerResponse.createByErrorCode(ResponseCode.ILLEGAL_ARGUMENT.getCode(), "参数缺少");
+        }
         ServerResponse validResponse = this.checkValid(user.getUsername(), Const.USERNAME);
         if (!validResponse.isSuccess()) {
             return validResponse;
         }
-        validResponse = this.checkValid(user.getEmail(), Const.EMAIL);
+        /*validResponse = this.checkValid(user.getEmail(), Const.EMAIL);
         if (!validResponse.isSuccess()) {
             return validResponse;
-        }
+        }*/
         user.setRole(Const.Role.ROLE_CUSTOMER);
         user.setPassword(MD5Util.MD5EncodeUtf8(user.getPassword()));
         user.setGoldenCount(0);
@@ -97,15 +100,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public ServerResponse<User> updateUserInfo(User user) {
         if (user.getEmail() != null) {
-            int resultCount = userMapper.checkUsername(user.getEmail());
+            int resultCount = userMapper.checkEmailByUserId(user.getEmail(), user.getId());
             if (resultCount > 0) {
-                return ServerResponse.createByErrorMessage("email以存在");
+                return ServerResponse.createByErrorMessage("该email已存在");
             }
         }
         if (user.getPhone() != null) {
-            int resultCount = userMapper.checkPhone(user.getPhone());
+            int resultCount = userMapper.checkPhoneByUserId(user.getPhone(), user.getId());
             if (resultCount > 0) {
-                return ServerResponse.createByErrorMessage("email以存在");
+                return ServerResponse.createByErrorMessage("该phone已存在");
             }
         }
         User updateuser = new User();

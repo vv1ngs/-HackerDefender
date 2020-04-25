@@ -50,7 +50,7 @@ public class RedisShardedPool {
 
     static {
         initPool();
-        
+
     }
 
     public static ShardedJedis getShardedJedis() {
@@ -71,10 +71,13 @@ public class RedisShardedPool {
 
     public static void main(String[] args) {
         ShardedJedis jedis = pool.getResource();
+
         for (int i = 0; i < 10; i++) {
-            jedis.set("key" + i, "value" + i);
+            String result = jedis.set("key" + i, "value" + i);
+            System.out.println(result);
         }
         returnResource(jedis);
 
     }
+
 }
