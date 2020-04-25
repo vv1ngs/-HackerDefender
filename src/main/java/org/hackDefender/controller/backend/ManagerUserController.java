@@ -22,7 +22,7 @@ import javax.servlet.http.HttpSession;
  * @version 2020/4/21 10:48
  */
 @Controller
-@RequestMapping("/manager")
+@RequestMapping("/manage/user")
 public class ManagerUserController {
     @Autowired
     private ManagerService managerService;
@@ -43,5 +43,5 @@ public class ManagerUserController {
         }
         return response;
     }
-    
+
 }

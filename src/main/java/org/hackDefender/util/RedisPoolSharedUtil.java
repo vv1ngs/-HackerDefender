@@ -123,12 +123,12 @@ public class RedisPoolSharedUtil {
         return result;
     }
 
-    public static String setEx(String key, String value, Integer time) {
+    public static String setEx(String key, String value, int time) {
         ShardedJedis jedis = null;
         String result = null;
         try {
             jedis = RedisShardedPool.getShardedJedis();
-            result = jedis.setex(key, Integer.parseInt(value), String.valueOf(time));
+            result = jedis.setex(key, time, value);
         } catch (Exception e) {
             log.error("setEx key:{} value:{} error:{}", key, value, e);
             RedisShardedPool.returnBrokenResource(jedis);
@@ -150,5 +150,9 @@ public class RedisPoolSharedUtil {
         }
         RedisShardedPool.returnResource(jedis);
         return result;
+    }
+
+    public static void main(String[] args) {
+
     }
 }

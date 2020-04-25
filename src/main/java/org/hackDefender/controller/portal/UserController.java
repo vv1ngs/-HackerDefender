@@ -25,7 +25,7 @@ import javax.servlet.http.HttpSession;
  * @version 2020/4/13 23:38
  */
 @Controller
-@RequestMapping("/user")
+@RequestMapping("/user/")
 public class UserController {
     @Autowired
     private UserServiceImpl userService;
@@ -41,7 +41,7 @@ public class UserController {
         return response;
     }
 
-    @RequestMapping(value = "logout.do", method = RequestMethod.POST)
+    @RequestMapping(value = "logout.do", method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse<String> logout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         String loginToken = CookieUtil.readLoginToken(httpServletRequest);
@@ -68,6 +68,8 @@ public class UserController {
         if (currentUser == null) {
             return ServerResponse.createByErrorCode(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
         }
+        user.setUsername(currentUser.getUsername());
+        user.setId(currentUser.getId());
         ServerResponse<User> response = userService.updateUserInfo(user);
         if (response.isSuccess()) {
             response.getData().setUsername(currentUser.getUsername());

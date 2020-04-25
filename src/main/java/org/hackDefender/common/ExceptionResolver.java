@@ -20,7 +20,7 @@ public class ExceptionResolver implements HandlerExceptionResolver {
     public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         log.error("{} Exection", request.getRequestURI(), ex);
         ModelAndView modelAndView = new ModelAndView(new MappingJackson2JsonView());
-        modelAndView.addObject("status", ResponseCode.ERROR.getCode());
+        modelAndView.addObject("status", ResponseCode.PROGRAMMER_ERROR.getCode());
         modelAndView.addObject("msg", "接口异常");
         modelAndView.addObject("data", ex.toString());
         return modelAndView;

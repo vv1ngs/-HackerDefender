@@ -84,6 +84,9 @@ public class JacksonUtil {
     }
 
     public static <T> T String2ToObj(String str, Class<?> collectionClass, Class<?>... elementClasses) {
+        if (StringUtils.isEmpty(str)) {
+            return null;
+        }
         JavaType javaType = objectMapper.getTypeFactory().constructParametricType(collectionClass, elementClasses);
 
         try {

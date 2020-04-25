@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author vvings
  * @version 2020/4/21 16:22
  */
-@RequestMapping("/manager/challenge")
+@RequestMapping("/manage/challenge")
 @Controller
 public class ManagerChallengeController {
     @Autowired

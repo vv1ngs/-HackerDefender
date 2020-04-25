@@ -34,7 +34,7 @@
       )
     values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{role,jdbcType=INTEGER}, 
-      #{goldenCount,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, now()
+      #{goldenCount,jdbcType=INTEGER}, now(), now()
       )
   </insert>
     <insert id="insertSelective" parameterType="org.hackDefender.pojo.User">
@@ -142,29 +142,35 @@
   </update>
     <select id="checkUsername" parameterType="string" resultType="int">
         select count(1) from hackerdefender_user
-        where username= #{username}
+        where username = #{username}
     </select>
     <select id="selectLogin" parameterType="map" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from hackerdefender_user
-        where username= #{username}
-        and password=#{password}
+        where username = #{username}
+        and password = #{password}
     </select>
 
     <select id="checkEmail" resultType="int" parameterType="string">
         select count(1)
         from hackerdefender_user
-        where email= #{email}
+        where email = #{email}
     </select>
-    <select id="checkPhone" resultType="int" parameterType="string">
-        select count (1)
-        from hackerdefender_user
-        where phone=#{phone}
-    </select>
-    <select id="checkPassword" resultType="int" parameterType="int">
+    <select id="checkPhoneByUserId" resultType="int" parameterType="map">
         select count(1)
         from hackerdefender_user
-        where password=#{md5password}
+        where phone = #{phone} and id != #{id}
+    </select>
+    <select id="checkPassword" resultType="int" parameterType="map">
+        select count(1)
+        from hackerdefender_user
+        where password = #{md5password} and id = #{id}
+    </select>
+    <select id="checkEmailByUserId" parameterType="map" resultType="int">
+        select
+        count(1)
+        from mmall_user
+        where id = #{userId} and id != #{userId}
     </select>
 </mapper>
