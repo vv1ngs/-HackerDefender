@@ -2,6 +2,8 @@ package org.hackDefender.dao;
 
 import org.hackDefender.pojo.Challenge;
 
+import java.util.List;
+
 public interface ChallengeMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -16,4 +18,6 @@ public interface ChallengeMapper {
     int updateByPrimaryKey(Challenge record);
 
     int checkId(Integer challengeId);
+
+    List<Challenge> selectAll();
 }

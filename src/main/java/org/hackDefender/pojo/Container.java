@@ -74,7 +74,7 @@ public class Container {
     }
 
     public void setUuid(String uuid) {
-        this.uuid = uuid;
+        this.uuid = uuid == null ? null : uuid.trim();
     }
 
     public Integer getPort() {

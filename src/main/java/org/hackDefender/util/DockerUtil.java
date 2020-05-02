@@ -29,15 +29,17 @@ public class DockerUtil {
                 .build();
     }
 
-    public static void addContainer(Integer userId, String uuid, Integer challengePort, String dockerImage, Long cupLimit, Long meLimit) {
+    public static void addContainer(Integer userId, String uuid, Integer challengePort, String dockerImage, String meLimit, Double cupLimit) {
         Map<String, String> map = Maps.newHashMap();
+        Long meL = (long) (Long.valueOf(meLimit) * 1024 * 1024);
+        Long cupL = new Double(cupLimit * 1e9).longValue();
         String localIp = String.valueOf(userId) + "-" + uuid;
         String containerPort = RedisPoolSharedUtil.sPop();
         map.put(localIp, localIp);
         DockerClient dockerClient = getDockerClient();
         TaskSpec taskSpec = new TaskSpec();
         taskSpec.withContainerSpec(new ContainerSpec().withImage(dockerImage));
-        taskSpec.withResources(new ResourceRequirements().withLimits(new ResourceSpecs().withNanoCPUs(cupLimit).withMemoryBytes(meLimit)));
+        taskSpec.withResources(new ResourceRequirements().withLimits(new ResourceSpecs().withNanoCPUs(cupL).withMemoryBytes(meL)));
         taskSpec.withPlacement(new ServicePlacement().withConstraints(Lists.<String>newArrayList("node.labels.name==linux-1")));
 
         ServiceSpec serviceSpec = new ServiceSpec().withName("testService")
