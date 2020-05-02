@@ -58,7 +58,7 @@ public class ContainerServiceImpl implements ContainerService {
         String uuid = UUIDUtil.getUUID8();
         container.setUuid(uuid);
         containerMapper.insert(container);
-        DockerUtil.addContainer(userId, uuid, challenge.getPort(), challenge.getDockerImage(), Long.parseLong(challenge.getMemoryLimit()), challenge.getCupLimit());
+        DockerUtil.addContainer(userId, uuid, challenge.getPort(), challenge.getDockerImage(), challenge.getMemoryLimit(), challenge.getCupLimit());
         return ServerResponse.createBySuccess("创建题目成功");
     }
 

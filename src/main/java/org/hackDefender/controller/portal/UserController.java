@@ -107,4 +107,5 @@ public class UserController {
         }
         return userService.getInformation(user.getId());
     }
+
 }

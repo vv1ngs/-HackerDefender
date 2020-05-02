@@ -1,5 +1,6 @@
 package org.hackDefender.controller.portal;
 
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.hackDefender.common.ResponseCode;
 import org.hackDefender.common.ServerResponse;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +31,7 @@ public class ChallengeController {
     private ChallengeService challengeService;
     @Autowired
     private ContainerService containerService;
+
 
     @RequestMapping(value = "add_container.do", method = RequestMethod.POST)
     @ResponseBody
@@ -89,5 +92,11 @@ public class ChallengeController {
             return ServerResponse.createByErrorCode(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
         }
         return containerService.removeContainer(challengeId, user.getId());
+    }
+
+    @RequestMapping(value = "list_challenge.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse<PageInfo> listChallenge(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pagerSize", defaultValue = "10") int pagerSize) {
+        return challengeService.listChallenge(pageNum, pagerSize);
     }
 }

@@ -1,5 +1,6 @@
 package org.hackDefender.service;
 
+import com.github.pagehelper.PageInfo;
 import org.hackDefender.common.ServerResponse;
 import org.hackDefender.pojo.Challenge;
 import org.hackDefender.vo.ContainerVo;
@@ -17,4 +18,6 @@ public interface ChallengeService {
     ServerResponse uploadScript(MultipartFile file, Integer challengId, String path);
 
     ServerResponse saveOrUpdateChallenge(Challenge challenge);
+
+    ServerResponse<PageInfo> listChallenge(int pageNum, int pageSize);
 }

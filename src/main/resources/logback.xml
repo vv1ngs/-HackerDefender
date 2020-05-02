@@ -10,10 +10,10 @@
         </filter>
     </appender>
 
-    <appender name="mall" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>C:\tools\apache-tomcat-9.0.27\logs\hackDefender.log</File>
+    <appender name="hackerDefender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>C:\tools\apache-tomcat-9.0.27\logs\hackerDefender.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/mall.log.%d{yyyy-MM-dd}.gz</fileNamePattern>
+            <fileNamePattern>/hackerDefender.%d{yyyy-MM-dd}.gz</fileNamePattern>
             <append>true</append>
             <maxHistory>10</maxHistory>
         </rollingPolicy>
@@ -24,7 +24,6 @@
 
 
     <appender name="error" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!--<File>d:/mmalllog/error.log</File>-->
         <File>C:\tools\apache-tomcat-9.0.27\logs\error.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>/error.log.%d{yyyy-MM-dd}.gz</fileNamePattern>

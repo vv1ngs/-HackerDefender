@@ -17,11 +17,11 @@ public class Challenge {
 
     private String memoryLimit;
 
-    private String scriptUrl;
-
-    private Long cupLimit;
+    private Double cupLimit;
 
     private String dockerImage;
+
+    private String scriptUrl;
 
     private Integer port;
 
@@ -29,7 +29,7 @@ public class Challenge {
 
     private Date updateTime;
 
-    public Challenge(Integer id, Integer categoryId, String name, String detail, Integer golden, Boolean status, String memoryLimit, String scriptUrl, Long cupLimit, String dockerImage, Integer port, Date createTime, Date updateTime) {
+    public Challenge(Integer id, Integer categoryId, String name, String detail, Integer golden, Boolean status, String memoryLimit, Double cupLimit, String dockerImage, String scriptUrl, Integer port, Date createTime, Date updateTime) {
         this.id = id;
         this.categoryId = categoryId;
         this.name = name;
@@ -37,28 +37,12 @@ public class Challenge {
         this.golden = golden;
         this.status = status;
         this.memoryLimit = memoryLimit;
-        this.scriptUrl = scriptUrl;
         this.cupLimit = cupLimit;
         this.dockerImage = dockerImage;
+        this.scriptUrl = scriptUrl;
         this.port = port;
         this.createTime = createTime;
         this.updateTime = updateTime;
-    }
-
-    public String getScriptUrl() {
-        return scriptUrl;
-    }
-
-    public void setScriptUrl(String scriptUrl) {
-        this.scriptUrl = scriptUrl;
-    }
-
-    public Integer getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(Integer categoryId) {
-        this.categoryId = categoryId;
     }
 
     public Challenge() {
@@ -71,6 +55,14 @@ public class Challenge {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getName() {
@@ -113,11 +105,11 @@ public class Challenge {
         this.memoryLimit = memoryLimit == null ? null : memoryLimit.trim();
     }
 
-    public Long getCupLimit() {
+    public Double getCupLimit() {
         return cupLimit;
     }
 
-    public void setCupLimit(Long cupLimit) {
+    public void setCupLimit(Double cupLimit) {
         this.cupLimit = cupLimit;
     }
 
@@ -127,6 +119,14 @@ public class Challenge {
 
     public void setDockerImage(String dockerImage) {
         this.dockerImage = dockerImage == null ? null : dockerImage.trim();
+    }
+
+    public String getScriptUrl() {
+        return scriptUrl;
+    }
+
+    public void setScriptUrl(String scriptUrl) {
+        this.scriptUrl = scriptUrl == null ? null : scriptUrl.trim();
     }
 
     public Integer getPort() {

@@ -38,7 +38,7 @@ public class ManagerChallengeController {
 
     @ResponseBody
     @RequestMapping("/upload_script.do")
-    public ServerResponse uploadScript(MultipartFile file, Integer challengeId, HttpServletRequest req) {
+    public ServerResponse uploadScript(@RequestParam(value = "script_file") MultipartFile file, Integer challengeId, HttpServletRequest req) {
         String path = req.getSession().getServletContext().getRealPath("upload");
         return challengeService.uploadScript(file, challengeId, path);
     }
@@ -46,7 +46,7 @@ public class ManagerChallengeController {
 
     @ResponseBody
     @RequestMapping("/add_challenge.do")
-    public ServerResponse addorUpdateChallenge(Challenge challenge) {
+    public ServerResponse<Challenge> addorUpdateChallenge(Challenge challenge) {
         return challengeService.saveOrUpdateChallenge(challenge);
     }
 }
