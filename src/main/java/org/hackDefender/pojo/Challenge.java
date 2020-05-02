@@ -17,6 +17,8 @@ public class Challenge {
 
     private String memoryLimit;
 
+    private String scriptUrl;
+
     private Long cupLimit;
 
     private String dockerImage;
@@ -27,7 +29,7 @@ public class Challenge {
 
     private Date updateTime;
 
-    public Challenge(Integer id, Integer categoryId, String name, String detail, Integer golden, Boolean status, String memoryLimit, Long cupLimit, String dockerImage, Integer port, Date createTime, Date updateTime) {
+    public Challenge(Integer id, Integer categoryId, String name, String detail, Integer golden, Boolean status, String memoryLimit, String scriptUrl, Long cupLimit, String dockerImage, Integer port, Date createTime, Date updateTime) {
         this.id = id;
         this.categoryId = categoryId;
         this.name = name;
@@ -35,11 +37,20 @@ public class Challenge {
         this.golden = golden;
         this.status = status;
         this.memoryLimit = memoryLimit;
+        this.scriptUrl = scriptUrl;
         this.cupLimit = cupLimit;
         this.dockerImage = dockerImage;
         this.port = port;
         this.createTime = createTime;
         this.updateTime = updateTime;
+    }
+
+    public String getScriptUrl() {
+        return scriptUrl;
+    }
+
+    public void setScriptUrl(String scriptUrl) {
+        this.scriptUrl = scriptUrl;
     }
 
     public Integer getCategoryId() {

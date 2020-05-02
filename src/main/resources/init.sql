@@ -1,4 +1,5 @@
-use hackerdefender;
+create database manage_course default character set
+    use hackerdefender;
 
 CREATE TABLE `hackerdefender_user`
 (
@@ -42,6 +43,7 @@ CREATE TABLE `hackerdefender_challenge`
     `memory_limit` varchar(50) default '128m' COMMENT '内存限制',
     `cup_limit`    float(50)   default 0.5 COMMENT 'cpu限制',
     `docker_image` varchar(255) COMMENT '题目的docker镜像',
+    `script_url`   varchar(255) COMMENT '该题的攻击脚本地址',
     `port`         int(11) COMMENT '题目转发到的port',
     `create_time`  datetime    NOT NULL COMMENT '创建时间',
     `update_time`  datetime    NOT NULL COMMENT '最后一次更新时间',
