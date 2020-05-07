@@ -33,17 +33,21 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
     <insert id="insert" parameterType="org.hackDefender.pojo.Challenge">
-    insert into hackerdefender_challenge (id, category_id, name, 
-      detail, golden, status, 
-      memory_limit, cup_limit, docker_image, 
-      script_url, port, create_time, 
-      update_time)
-    values (#{id,jdbcType=INTEGER}, #{categoryId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
-      #{detail,jdbcType=VARCHAR}, #{golden,jdbcType=INTEGER}, #{status,jdbcType=BIT}, 
-      #{memoryLimit,jdbcType=VARCHAR}, #{cupLimit,jdbcType=DOUBLE}, #{dockerImage,jdbcType=VARCHAR}, 
-      #{scriptUrl,jdbcType=VARCHAR}, #{port,jdbcType=INTEGER}, now(),
-      now())
-  </insert>
+        <selectKey resultType="int" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID() AS id
+        </selectKey>
+        insert into hackerdefender_challenge
+        (id, category_id, name,
+        detail, golden, status,
+        memory_limit, cup_limit, docker_image,
+        script_url, port, create_time,
+        update_time)
+        values (#{id,jdbcType=INTEGER}, #{categoryId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+        #{detail,jdbcType=VARCHAR}, #{golden,jdbcType=INTEGER}, #{status,jdbcType=BIT},
+        #{memoryLimit,jdbcType=VARCHAR}, #{cupLimit,jdbcType=DOUBLE}, #{dockerImage,jdbcType=VARCHAR},
+        #{scriptUrl,jdbcType=VARCHAR}, #{port,jdbcType=INTEGER}, now(),
+        now())
+    </insert>
     <insert id="insertSelective" parameterType="org.hackDefender.pojo.Challenge">
         insert into hackerdefender_challenge
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -196,5 +200,12 @@
         select
         <include refid="Base_Column_List"/>
         from hackerdefender_challenge
+    </select>
+    <select id="selectByName" resultMap="BaseResultMap" parameterType="string">
+        select
+        <include refid="Base_Column_List"/>
+        from hackerdefender_challenge
+        where name=#{name}
+        order by id desc LIMIT 1;
     </select>
 </mapper>

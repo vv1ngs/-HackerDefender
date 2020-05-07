@@ -20,4 +20,6 @@ public interface ChallengeMapper {
     int checkId(Integer challengeId);
 
     List<Challenge> selectAll();
+
+    Challenge selectByName(String name);
 }

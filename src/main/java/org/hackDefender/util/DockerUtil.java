@@ -31,7 +31,7 @@ public class DockerUtil {
 
     public static void addContainer(Integer userId, String uuid, Integer challengePort, String dockerImage, String meLimit, Double cupLimit) {
         Map<String, String> map = Maps.newHashMap();
-        Long meL = (long) (Long.valueOf(meLimit) * 1024 * 1024);
+        Long meL = Long.valueOf(meLimit.substring(0, meLimit.length() - 1)) * 1024 * 1024;
         Long cupL = new Double(cupLimit * 1e9).longValue();
         String localIp = String.valueOf(userId) + "-" + uuid;
         String containerPort = RedisPoolSharedUtil.sPop();

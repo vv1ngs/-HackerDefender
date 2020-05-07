@@ -7,7 +7,7 @@ package org.hackDefender.util;
 public class FrpUtil {
     private static final String templateURl = new StringBuilder().append("http://").append(PropertiesUtil.getProperty("frpc_admin_url")).append(":")
             .append(PropertiesUtil.getProperty("frpc_admin_port")).append("/api/").toString();
-    private static final String putURL = templateURl + "api";
+    private static final String putURL = templateURl + "config";
     private static final String reloadURL = templateURl + "reload";
     private static final String template = "\n\n[direct_%s]\n" +
             "type = tcp\n" +
