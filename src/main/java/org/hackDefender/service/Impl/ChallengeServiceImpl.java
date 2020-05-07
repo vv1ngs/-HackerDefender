@@ -129,9 +129,10 @@ public class ChallengeServiceImpl implements ChallengeService {
                 }
                 return ServerResponse.createByErrorMessage("更新题目失败");
             } else {
-                int rowCount = challengeMapper.insert(challenge);
+                int rowCount = challengeMapper.insertSelective(challenge);
                 if (rowCount > 0) {
-                    return ServerResponse.createBySuccess("新增题目成功", challenge);
+                    Challenge insert = challengeMapper.selectByName(challenge.getName());
+                    return ServerResponse.createBySuccess("新增题目成功", insert);
                 }
                 return ServerResponse.createByErrorMessage("新增题目失败");
             }
