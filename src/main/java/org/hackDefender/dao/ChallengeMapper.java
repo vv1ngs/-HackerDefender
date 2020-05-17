@@ -22,4 +22,6 @@ public interface ChallengeMapper {
     List<Challenge> selectAll();
 
     Challenge selectByName(String name);
+
+    String selectScript(Integer challengeId);
 }

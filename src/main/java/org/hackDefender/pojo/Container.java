@@ -11,6 +11,8 @@ public class Container {
 
     private Integer renewCount;
 
+    private String containerId;
+
     private String uuid;
 
     private Integer port;
@@ -21,16 +23,25 @@ public class Container {
 
     private Date updateTime;
 
-    public Container(Integer id, Integer userId, Integer challengeId, Integer renewCount, String uuid, Integer port, Boolean status, Date createTime, Date updateTime) {
+    public Container(Integer id, Integer userId, Integer challengeId, Integer renewCount, String containerId, String uuid, Integer port, Boolean status, Date createTime, Date updateTime) {
         this.id = id;
         this.userId = userId;
         this.challengeId = challengeId;
         this.renewCount = renewCount;
+        this.containerId = containerId;
         this.uuid = uuid;
         this.port = port;
         this.status = status;
         this.createTime = createTime;
         this.updateTime = updateTime;
+    }
+
+    public String getContainerId() {
+        return containerId;
+    }
+
+    public void setContainerId(String containerId) {
+        this.containerId = containerId;
     }
 
     public Container() {

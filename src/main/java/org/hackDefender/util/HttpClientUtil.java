@@ -1,6 +1,7 @@
 package org.hackDefender.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
@@ -9,6 +10,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 
@@ -18,15 +20,20 @@ import java.io.IOException;
  */
 @Slf4j
 public class HttpClientUtil {
-    public static void getRequest(String url) {
+    public static String getRequest(String url) {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpGet get = new HttpGet(url);
             HttpResponse httpResponse = httpClient.execute(get);
-            int code = httpResponse.getStatusLine().getStatusCode();
-            System.out.println(code);
+            int responseCode = httpResponse.getStatusLine().getStatusCode();
+            if (responseCode == 200) {
+                HttpEntity entity = httpResponse.getEntity();
+                return EntityUtils.toString(entity, "utf-8");
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     public static void putRequest(String url, String str) {

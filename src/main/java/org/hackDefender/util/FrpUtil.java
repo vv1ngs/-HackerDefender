@@ -9,7 +9,7 @@ public class FrpUtil {
             .append(PropertiesUtil.getProperty("frpc_admin_port")).append("/api/").toString();
     private static final String putURL = templateURl + "config";
     private static final String reloadURL = templateURl + "reload";
-    private static final String template = "\n\n[direct_%s]\n" +
+    private static final String template = "\n\n[direct_%s_tcp]\n" +
             "type = tcp\n" +
             "local_ip = %s\n" +
             "local_port = %s\n" +

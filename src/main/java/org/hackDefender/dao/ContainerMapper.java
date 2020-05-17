@@ -22,9 +22,13 @@ public interface ContainerMapper {
 
     List<Container> selectByTime(@Param("date") String date);
 
-    Container selectByUidAndCId(@Param("userId") Integer userId, @Param("challengeId") Integer challengeId);
+    Container selectByUidAndCId(@Param("userId") Integer userId);
 
     int checkUid(Integer userId);
 
     List<Container> selectAll();
+
+    String selectContainerID(Integer userId);
+
+    int selectRenewCountById(Integer userId);
 }

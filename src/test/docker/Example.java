@@ -1,11 +1,13 @@
 package docker;
 
 import com.github.dockerjava.api.DockerClient;
-import com.github.dockerjava.api.command.CreateNetworkResponse;
+import com.github.dockerjava.api.command.CreateServiceResponse;
 import com.github.dockerjava.api.model.*;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.google.common.collect.Lists;
 import org.hackDefender.util.PropertiesUtil;
+
+import java.util.List;
 
 /**
  * @author vvings
@@ -19,7 +21,7 @@ public class Example {
         return dockerClient;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
        /* DockerClient dockerClient = connectDocker();
         ExposedPort tcp80 = ExposedPort.tcp(80);
@@ -38,23 +40,33 @@ public class Example {
         Long cuplimit = new Long((long) (1E9 * 0.5));
         Long melimit = new Long((long) 128 * 1024 * 1024);
         DockerClient dockerClient = connectDocker();
-        CreateNetworkResponse network = dockerClient.createNetworkCmd().
+        /*CreateNetworkResponse network = dockerClient.createNetworkCmd().
                 withName("frp_test").
                 withDriver("overlay").
-                withIpam(new Network.Ipam().withConfig(new Network.Ipam.Config().withSubnet("172.0.0.1")).
+                withIpam(new Network.Ipam().withConfig(new Network.Ipam.Config().withSubnet("172.0.0.1/16")).
                         withDriver("default")).
-                withAttachable(true).exec();
+                withAttachable(true).exec();*/
 
 
         TaskSpec taskSpec = new TaskSpec().withContainerSpec(new ContainerSpec().withImage("ctftraining/qwb_2019_supersqli"))
                 .withResources(new ResourceRequirements().withLimits(new ResourceSpecs().withNanoCPUs(cuplimit).withMemoryBytes(melimit)))
-                .withPlacement(new ServicePlacement().withConstraints(Lists.<String>newArrayList("")));
+                .withPlacement(new ServicePlacement().withConstraints(Lists.<String>newArrayList("node.labels.name==linux-1")));
 
         ServiceSpec serviceSpec = new ServiceSpec().withName("testService").
-                withNetworks(Lists.newArrayList(new NetworkAttachmentConfig().withTarget("frp_container")))
+                withNetworks(Lists.newArrayList(new NetworkAttachmentConfig().withTarget("frp_test")))
                 .withEndpointSpec(new EndpointSpec().withMode(EndpointResolutionMode.DNSRR))
                 .withTaskTemplate(taskSpec)
                 .withMode(new ServiceModeConfig().withReplicated(new ServiceReplicatedModeOptions().withReplicas(1)));
-        dockerClient.createServiceCmd(serviceSpec).exec();
+        CreateServiceResponse exec = dockerClient.createServiceCmd(serviceSpec).exec();
+        String a = null;
+        while (a == null) {
+            List<Task> testService = dockerClient.listTasksCmd().withNameFilter("testService").exec();
+            for (Task task : testService) {
+                if (task.getStatus().getContainerStatus() != null) {
+                    a = task.getStatus().getContainerStatus().getContainerID();
+                }
+            }
+        }
+        System.out.println(a);
     }
 }

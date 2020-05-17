@@ -49,23 +49,28 @@ public class ContainerServiceImpl implements ContainerService {
         if (resultCount > 0) {
             return ServerResponse.createByErrorMessage("您已创建一个实例");
         }
+        String uuid = UUIDUtil.getUUID8();
         Challenge challenge = challengeMapper.selectByPrimaryKey(challengeId);
+        List<String> list = DockerUtil.addContainer(userId, uuid, challenge.getPort(), challenge.getDockerImage(), challenge.getMemoryLimit(), challenge.getCupLimit());
         Container container = new Container();
         container.setChallengeId(challengeId);
-        container.setPort(challenge.getPort());
+        container.setPort(Integer.parseInt(list.get(0)));
+        container.setContainerId(list.get(1));
         container.setRenewCount(0);
         container.setStatus(true);
-        String uuid = UUIDUtil.getUUID8();
+        container.setUserId(userId);
         container.setUuid(uuid);
-        containerMapper.insert(container);
-        DockerUtil.addContainer(userId, uuid, challenge.getPort(), challenge.getDockerImage(), challenge.getMemoryLimit(), challenge.getCupLimit());
-        return ServerResponse.createBySuccess("创建题目成功");
+        int rowCount = containerMapper.insert(container);
+        if (rowCount == 1) {
+            return ServerResponse.createBySuccess("创建实例成功");
+        }
+        return ServerResponse.createByErrorMessage("创建实例失败");
     }
 
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, timeout = 1, isolation = Isolation.DEFAULT)
     @Override
-    public ServerResponse AutoCloseContainer() {
+    public void AutoCloseContainer() {
         Date closeDate = DateUtils.addSeconds(new Date(), -Integer.parseInt(PropertiesUtil.getProperty("container_lasttime", "3600")));
         List<Container> containerList = containerMapper.selectByTime(DateTimeUtil.DateToString(closeDate));
         for (Container container : containerList) {
@@ -76,16 +81,15 @@ public class ContainerServiceImpl implements ContainerService {
             }
             containerMapper.deleteByPrimaryKey(container.getId());
         }
-        return null;
     }
 
     @Override
-    public ServerResponse removeContainer(Integer challengeId, Integer userId) {
-        Container container = containerMapper.selectByUidAndCId(userId, challengeId);
-        int port = container.getPort();
+    public ServerResponse removeContainer(Integer userId) {
+        Container container = containerMapper.selectByUidAndCId(userId);
         if (container == null) {
-            return ServerResponse.createByError();
+            return ServerResponse.createByErrorMessage("您还未创建实例");
         }
+        int port = container.getPort();
         DockerUtil.removeContainer(userId, container.getUuid());
         if (port != 0) {
             RedisPoolSharedUtil.sAdd(port);
@@ -96,11 +100,16 @@ public class ContainerServiceImpl implements ContainerService {
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, timeout = 1, isolation = Isolation.DEFAULT)
     @Override
-    public ServerResponse lengthContainer(Integer challengeId, Integer userId) {
-        Container container = containerMapper.selectByUidAndCId(userId, challengeId);
+    public ServerResponse lengthContainer(Integer userId) {
+        int renewCount = containerMapper.selectRenewCountById(userId);
+        if (renewCount > Integer.parseInt(PropertiesUtil.getProperty("renew_count"))) {
+            return ServerResponse.createByErrorMessage("已超过最大延长次数");
+        }
+        Container container = containerMapper.selectByUidAndCId(userId);
         Date date = new Date();
         container.setCreateTime(date);
         container.setUpdateTime(date);
+        container.setRenewCount(container.getRenewCount() + 1);
         containerMapper.updateByPrimaryKeySelective(container);
         return ServerResponse.createBySuccess();
     }
@@ -110,7 +119,6 @@ public class ContainerServiceImpl implements ContainerService {
         PageHelper.startPage(pageNum, pageSize);
         List<Container> containerList = containerMapper.selectAll();
         PageInfo pageResult = new PageInfo(containerList);
-
         return ServerResponse.createBySuccess(pageResult);
     }
 }

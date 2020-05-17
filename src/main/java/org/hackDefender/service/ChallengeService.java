@@ -20,4 +20,6 @@ public interface ChallengeService {
     ServerResponse saveOrUpdateChallenge(Challenge challenge);
 
     ServerResponse<PageInfo> listChallenge(int pageNum, int pageSize);
+
+    ServerResponse attack(Integer useId, Integer challengeId);
 }
