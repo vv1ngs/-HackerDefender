@@ -4,6 +4,7 @@
     <resultMap id="BaseResultMap" type="org.hackDefender.pojo.User">
         <constructor>
             <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="uuid" jdbcType="VARCHAR" javaType="java.lang.String"/>
             <arg column="username" jdbcType="VARCHAR" javaType="java.lang.String"/>
             <arg column="password" jdbcType="VARCHAR" javaType="java.lang.String"/>
             <arg column="email" jdbcType="VARCHAR" javaType="java.lang.String"/>
@@ -15,7 +16,7 @@
         </constructor>
     </resultMap>
     <sql id="Base_Column_List">
-    id, username, password, email, phone, role, golden_count, create_time, update_time
+    id, uuid,username, password, email, phone, role, golden_count, create_time, update_time
   </sql>
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
@@ -28,11 +29,11 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
     <insert id="insert" parameterType="org.hackDefender.pojo.User">
-    insert into hackerdefender_user (id, username, password, 
+    insert into hackerdefender_user (id, uuid,username, password,
       email, phone, role, 
       golden_count, create_time, update_time
       )
-    values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER},#{uuid,jdbcType=VARCHAR} ,#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
       #{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{role,jdbcType=INTEGER}, 
       #{goldenCount,jdbcType=INTEGER}, now(), now()
       )
@@ -42,6 +43,9 @@
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
                 id,
+            </if>
+            <if test="uuid != null">
+                uuid,
             </if>
             <if test="username != null">
                 username,
@@ -72,6 +76,9 @@
             <if test="id != null">
                 #{id,jdbcType=INTEGER},
             </if>
+            <if test="uuid != null">
+                #{uuid,jdbcType=VARCHAR},
+            </if>
             <if test="username != null">
                 #{username,jdbcType=VARCHAR},
             </if>
@@ -101,6 +108,9 @@
     <update id="updateByPrimaryKeySelective" parameterType="org.hackDefender.pojo.User">
         update hackerdefender_user
         <set>
+            <if test="uuid != null">
+                uuid = #{username,jdbcType=VARCHAR},
+            </if>
             <if test="username != null">
                 username = #{username,jdbcType=VARCHAR},
             </if>
@@ -130,7 +140,8 @@
     </update>
     <update id="updateByPrimaryKey" parameterType="org.hackDefender.pojo.User">
     update hackerdefender_user
-    set username = #{username,jdbcType=VARCHAR},
+    set {uuid = #{uuid,jdbcType=VARCHAR},
+        username = #{username,jdbcType=VARCHAR},
       password = #{password,jdbcType=VARCHAR},
       email = #{email,jdbcType=VARCHAR},
       phone = #{phone,jdbcType=VARCHAR},

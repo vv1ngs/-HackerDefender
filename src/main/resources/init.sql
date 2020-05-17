@@ -4,6 +4,7 @@ create database manage_course default character set
 CREATE TABLE `hackerdefender_user`
 (
     `id`           int(11)     NOT NULL AUTO_INCREMENT COMMENT '用户表id',
+    `uuid`         varchar(50) NOT NULL COMMENT 'uuid标识符',
     `username`     varchar(50) NOT NULL COMMENT '用户名',
     `password`     varchar(50) NOT NULL COMMENT '用户密码，MD5加密',
     `email`        varchar(50) DEFAULT NULL,
@@ -59,6 +60,7 @@ CREATE TABLE `challenge_container`
     `user_id`      int(11)     NOT NULL COMMENT '用户ID',
     `challenge_id` int(11)     NOT NULL COMMENT '题目Id',
     `renew_count`  int(11)     NOT NULL COMMENT '用户重启次数',
+    `container_id` varchar(50) NOT NULL COMMENT 'docker中的containerId',
     `uuid`         varchar(50) NOT NULL COMMENT 'uuid标识符',
     `port`         int(11)     NOT NULL COMMENT '映射端口',
     `status`       tinyint(1) DEFAULT '1' COMMENT '容器状态 1-正常 0-下线',

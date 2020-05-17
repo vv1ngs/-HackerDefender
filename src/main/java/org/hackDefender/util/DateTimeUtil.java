@@ -12,9 +12,7 @@ import java.util.Date;
  * @version 2020/3/22 1:23
  */
 public class DateTimeUtil {
-    //joda-time
-    //str -> date
-    //date->str
+
     public static final String STANDER_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     public static String DateToString(Date dateTimeDate, String formatStr) {

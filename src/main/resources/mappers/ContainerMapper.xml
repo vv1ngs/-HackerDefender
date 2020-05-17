@@ -6,6 +6,7 @@
             <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
             <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
             <arg column="challenge_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="container_id" jdbcType="VARCHAR" javaType="java.lang.String"/>
             <arg column="renew_count" jdbcType="INTEGER" javaType="java.lang.Integer"/>
             <arg column="uuid" jdbcType="VARCHAR" javaType="java.lang.String"/>
             <arg column="port" jdbcType="INTEGER" javaType="java.lang.Integer"/>
@@ -15,7 +16,7 @@
         </constructor>
     </resultMap>
     <sql id="Base_Column_List">
-    id, user_id, challenge_id, renew_count, uuid, port, status, create_time, update_time
+    id, user_id, challenge_id, renew_count, container_id,uuid, port, status, create_time, update_time
   </sql>
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
@@ -29,11 +30,11 @@
   </delete>
     <insert id="insert" parameterType="org.hackDefender.pojo.Container">
     insert into challenge_container (id, user_id, challenge_id, 
-      renew_count, uuid, port, 
+      renew_count, uuid, ,container_id,port,
       status, create_time, update_time
       )
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{challengeId,jdbcType=INTEGER}, 
-      #{renewCount,jdbcType=INTEGER}, #{uuid,jdbcType=VARCHAR}, #{port,jdbcType=INTEGER},
+      #{renewCount,jdbcType=INTEGER}, #{uuid,jdbcType=VARCHAR},#{containerId,jdbcType=VARCHAR} ,#{port,jdbcType=INTEGER},
       #{status,jdbcType=BIT}, now(), now()
       )
   </insert>
@@ -54,6 +55,9 @@
             </if>
             <if test="uuid != null">
                 uuid,
+            </if>
+            <if test=" containerId != null">
+                container_id,
             </if>
             <if test="port != null">
                 port,
@@ -84,6 +88,9 @@
             <if test="uuid != null">
                 #{uuid,jdbcType=VARCHAR},
             </if>
+            <if test="containerId != null">
+                #{containerId,jdbcType=VARCHAR},
+            </if>
             <if test="port != null">
                 #{port,jdbcType=INTEGER},
             </if>
@@ -113,6 +120,9 @@
             <if test="uuid != null">
                 uuid = #{uuid,jdbcType=VARCHAR},
             </if>
+            <if test="containerId != null">
+                container_id = #{uuid,jdbcType=VARCHAR},
+            </if>
             <if test="port != null">
                 port = #{port,jdbcType=INTEGER},
             </if>
@@ -134,6 +144,7 @@
       challenge_id = #{challengeId,jdbcType=INTEGER},
       renew_count = #{renewCount,jdbcType=INTEGER},
       uuid = #{uuid,jdbcType=VARCHAR},
+      container_id=#{containerId,jdbcType=VARCHAR}
       port = #{port,jdbcType=INTEGER},
       status = #{status,jdbcType=BIT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -158,7 +169,6 @@
         <include refid="Base_Column_List"/>
         from challenge_container
         where user_id=#{userId}
-        and challenge_id=#{challengeId}
     </select>
     <select id="checkUid" resultType="int" parameterType="int">
         select
@@ -171,4 +181,15 @@
         <include refid="Base_Column_List"/>
         from challenge_container
     </select>
+    <select id="selectContainerID" resultType="string" parameterType="int">
+        select container_id
+        from challenge_container
+        where user_id=#{userId}
+    </select>
+    <select id="selectRenewCountById" resultType="int" parameterType="int">
+        select renew_count
+        from challenge_container
+        where user_id=#{userId}
+    </select>
+
 </mapper>

@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.hackDefender.common.ResponseCode;
 import org.hackDefender.common.ServerResponse;
 import org.hackDefender.dao.CategoryMapper;
@@ -17,6 +18,7 @@ import org.hackDefender.pojo.Container;
 import org.hackDefender.pojo.User;
 import org.hackDefender.service.ChallengeService;
 import org.hackDefender.util.FtpUtil;
+import org.hackDefender.util.PythonUtil;
 import org.hackDefender.util.UUIDUtil;
 import org.hackDefender.vo.ChallengeVo;
 import org.hackDefender.vo.ContainerVo;
@@ -153,5 +155,15 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         PageInfo pageInfo = new PageInfo(list2);
         return ServerResponse.createBySuccess(pageInfo);
+    }
+
+    @Override
+    public ServerResponse attack(Integer userId, Integer challengeId) {
+        String ScriptUrl = challengeMapper.selectScript(challengeId);
+        if (StringUtils.isEmpty(ScriptUrl)) {
+            return ServerResponse.createByErrorMessage("该题暂无攻击文本");
+        }
+        Container container = containerMapper.selectByUid(userId);
+        return PythonUtil.exec(ScriptUrl, "http://127.0.0.1:" + container.getPort());
     }
 }

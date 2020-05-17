@@ -53,4 +53,14 @@ public class CookieUtil {
             }
         }
     }
+
+    public static Boolean frequency_limit(String uuid) {
+        if (StringUtils.isEmpty(RedisPoolSharedUtil.get(uuid + "_limit"))) {
+            RedisPoolSharedUtil.setEx(uuid + "_lilit", "60", 60);
+            return false;
+        } else {
+            return true;
+        }
+
+    }
 }

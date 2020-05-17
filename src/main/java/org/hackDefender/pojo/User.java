@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class User {
     private Integer id;
-
+    private String uuid;
     private String username;
 
     private String password;
@@ -21,8 +21,17 @@ public class User {
 
     private Date updateTime;
 
-    public User(Integer id, String username, String password, String email, String phone, Integer role, Integer goldenCount, Date createTime, Date updateTime) {
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public User(Integer id, String uuid, String username, String password, String email, String phone, Integer role, Integer goldenCount, Date createTime, Date updateTime) {
         this.id = id;
+        this.uuid = uuid;
         this.username = username;
         this.password = password;
         this.email = email;

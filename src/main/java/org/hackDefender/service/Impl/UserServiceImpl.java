@@ -10,6 +10,7 @@ import org.hackDefender.dao.UserMapper;
 import org.hackDefender.pojo.User;
 import org.hackDefender.service.UserService;
 import org.hackDefender.util.MD5Util;
+import org.hackDefender.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -60,6 +61,7 @@ public class UserServiceImpl implements UserService {
         }*/
         user.setRole(Const.Role.ROLE_CUSTOMER);
         user.setPassword(MD5Util.MD5EncodeUtf8(user.getPassword()));
+        user.setUuid(UUIDUtil.getUUID8());
         user.setGoldenCount(0);
         int resultCount = userMapper.insert(user);
         if (resultCount == 0) {
@@ -115,6 +117,7 @@ public class UserServiceImpl implements UserService {
         updateuser.setId(user.getId());
         updateuser.setEmail(user.getEmail());
         updateuser.setPhone(user.getPhone());
+        updateuser.setUuid(user.getUuid());
         int updateCount = userMapper.updateByPrimaryKeySelective(updateuser);
         if (updateCount > 0) {
             return ServerResponse.createBySuccess("更新个人信息成功", updateuser);
@@ -134,5 +137,14 @@ public class UserServiceImpl implements UserService {
             return ServerResponse.createBySuccess("密码更新成功");
         }
         return ServerResponse.createByErrorMessage("更新密码失败");
+    }
+
+    public ServerResponse openShell(Integer id) {
+        String containerID = containerMapper.selectContainerID(id);
+        if (containerID == null) {
+            return ServerResponse.createByErrorMessage("还没有启动实例");
+        } else {
+            return ServerResponse.createBySuccess("成功打开", containerID);
+        }
     }
 }

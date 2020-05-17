@@ -1,6 +1,8 @@
 package org.hackDefender.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.hackDefender.common.Const;
 import org.hackDefender.common.RedisShardedPool;
 import redis.clients.jedis.ShardedJedis;
 
@@ -10,6 +12,8 @@ import redis.clients.jedis.ShardedJedis;
  */
 @Slf4j
 public class RedisPoolSharedUtil {
+    private static final String SET_IF_NOT_EXIST = "NX";
+    private static final String SET_WITH_EXPIRE_TIME = "EX";
 
     public static String set(String key, String value) {
         ShardedJedis jedis = null;
@@ -22,6 +26,8 @@ public class RedisPoolSharedUtil {
             RedisShardedPool.returnBrokenResource(jedis);
             return null;
         }
+        RedisShardedPool.returnResource(jedis);
+
         return result;
     }
 
@@ -36,6 +42,7 @@ public class RedisPoolSharedUtil {
             RedisShardedPool.returnBrokenResource(jedis);
             return null;
         }
+        RedisShardedPool.returnResource(jedis);
         return result;
     }
 
@@ -50,6 +57,8 @@ public class RedisPoolSharedUtil {
             RedisShardedPool.returnBrokenResource(jedis);
             return null;
         }
+        RedisShardedPool.returnResource(jedis);
+
         return result;
     }
 
@@ -64,6 +73,8 @@ public class RedisPoolSharedUtil {
             RedisShardedPool.returnBrokenResource(jedis);
             return null;
         }
+        RedisShardedPool.returnResource(jedis);
+
         return result;
     }
 
@@ -78,6 +89,8 @@ public class RedisPoolSharedUtil {
             RedisShardedPool.returnBrokenResource(jedis);
             return null;
         }
+        RedisShardedPool.returnResource(jedis);
+
         return result;
     }
 
@@ -92,6 +105,8 @@ public class RedisPoolSharedUtil {
             RedisShardedPool.returnBrokenResource(jedis);
             return null;
         }
+        RedisShardedPool.returnResource(jedis);
+
         return result;
     }
 
@@ -106,6 +121,8 @@ public class RedisPoolSharedUtil {
             RedisShardedPool.returnBrokenResource(jedis);
             return null;
         }
+        RedisShardedPool.returnResource(jedis);
+
         return result;
     }
 
@@ -120,6 +137,8 @@ public class RedisPoolSharedUtil {
             RedisShardedPool.returnBrokenResource(jedis);
             return null;
         }
+        RedisShardedPool.returnResource(jedis);
+
         return result;
     }
 
@@ -134,6 +153,8 @@ public class RedisPoolSharedUtil {
             RedisShardedPool.returnBrokenResource(jedis);
             return null;
         }
+        RedisShardedPool.returnResource(jedis);
+
         return result;
     }
 
@@ -152,7 +173,36 @@ public class RedisPoolSharedUtil {
         return result;
     }
 
-    public static void main(String[] args) {
-
+    public static boolean trylock(String key, int timeout) {
+        Long endtime = timeout + System.currentTimeMillis();
+        long lockTime = Long.parseLong(PropertiesUtil.getProperty("lock.time", "5000"));
+        while (System.currentTimeMillis() > endtime) {
+            Long setResult = RedisPoolSharedUtil.setNx(key, String.valueOf(System.currentTimeMillis() + timeout));
+            if (setResult != null && setResult.intValue() == 1) {
+                return true;
+            } else {
+                String lockValueStr = RedisPoolSharedUtil.get(Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK);
+                if (lockValueStr != null && System.currentTimeMillis() > Long.parseLong(lockValueStr)) {
+                    String getSetResult = RedisPoolSharedUtil.getSet(Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK, String.valueOf(System.currentTimeMillis() + lockTime));
+                    if (getSetResult == null || (getSetResult != null && StringUtils.equals(lockValueStr, getSetResult))) {
+                        //真正获取到锁
+                        return true;
+                    } else {
+                        log.info("没有获取到分布式锁:{}", Const.REDIS_LOCK.CLOSE_ORDER_TASK_LOCK);
+                    }
+                }
+            }
+            if (timeout == 0) {
+                return false;
+            }
+            try {
+                Thread.sleep(300);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
     }
+
+
 }

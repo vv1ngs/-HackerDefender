@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 /**
  * @author vvings
@@ -108,4 +109,22 @@ public class UserController {
         return userService.getInformation(user.getId());
     }
 
+    @RequestMapping(value = "open_shell.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse openShell(HttpServletRequest httpServletRequest, HttpServletResponse httpServerResponse) throws IOException {
+        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
+        if (StringUtils.isEmpty(loginToken)) {
+            return ServerResponse.createByErrorCode(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
+        }
+        String userJsonStr = RedisPoolSharedUtil.get(loginToken);
+        User user = JacksonUtil.String2ToObj(userJsonStr, User.class);
+        if (user == null) {
+            return ServerResponse.createByErrorCode(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
+        }
+        ServerResponse serverResponse = userService.openShell(user.getId());
+        if (serverResponse.isSuccess()) {
+            httpServerResponse.sendRedirect("/index.jsp?containerId=" + serverResponse.getData());
+        }
+        return serverResponse;
+    }
 }

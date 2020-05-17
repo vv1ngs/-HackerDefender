@@ -45,6 +45,9 @@ public class ChallengeController {
         if (user == null) {
             return ServerResponse.createBySuccess(user);
         }
+        if (CookieUtil.frequency_limit(user.getUuid())) {
+            return ServerResponse.createByErrorMessage("请求过于频繁");
+        }
         return containerService.addContainer(challengeId, user.getId());
     }
 
@@ -76,12 +79,15 @@ public class ChallengeController {
         if (user == null) {
             return ServerResponse.createByErrorCode(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
         }
-        return containerService.lengthContainer(challengeId, user.getId());
+        if (CookieUtil.frequency_limit(user.getUuid())) {
+            return ServerResponse.createByErrorMessage("请求过于频繁");
+        }
+        return containerService.lengthContainer(user.getId());
     }
 
     @RequestMapping(value = "del_container.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse<ContainerVo> deleteContainer(Integer challengeId, HttpServletRequest httpServletRequest) {
+    public ServerResponse<ContainerVo> deleteContainer(HttpServletRequest httpServletRequest) {
         String loginToken = CookieUtil.readLoginToken(httpServletRequest);
         if (StringUtils.isEmpty(loginToken)) {
             return ServerResponse.createByErrorCode(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
@@ -91,12 +97,45 @@ public class ChallengeController {
         if (user == null) {
             return ServerResponse.createByErrorCode(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
         }
-        return containerService.removeContainer(challengeId, user.getId());
+        if (CookieUtil.frequency_limit(user.getUuid())) {
+            return ServerResponse.createByErrorMessage("请求过于频繁");
+        }
+        return containerService.removeContainer(user.getId());
     }
 
     @RequestMapping(value = "list_challenge.do", method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse<PageInfo> listChallenge(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pagerSize", defaultValue = "10") int pagerSize) {
+    public ServerResponse<PageInfo> listChallenge(HttpServletRequest httpServletRequest, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pagerSize", defaultValue = "10") int pagerSize) {
+        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
+        if (StringUtils.isEmpty(loginToken)) {
+            return ServerResponse.createByErrorCode(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
+        }
+        String userJsonStr = RedisPoolSharedUtil.get(loginToken);
+        User user = JacksonUtil.String2ToObj(userJsonStr, User.class);
+        if (user == null) {
+            return ServerResponse.createByErrorCode(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
+        }
+        if (CookieUtil.frequency_limit(user.getUuid())) {
+            return ServerResponse.createByErrorMessage("请求过于频繁");
+        }
         return challengeService.listChallenge(pageNum, pagerSize);
+    }
+
+    @RequestMapping(value = "attack.do", method = RequestMethod.GET)
+    @ResponseBody
+    public ServerResponse attack(HttpServletRequest httpServletRequest, Integer challengeId) {
+        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
+        if (StringUtils.isEmpty(loginToken)) {
+            return ServerResponse.createByErrorCode(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
+        }
+        String userJsonStr = RedisPoolSharedUtil.get(loginToken);
+        User user = JacksonUtil.String2ToObj(userJsonStr, User.class);
+        if (user == null) {
+            return ServerResponse.createByErrorCode(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
+        }
+        if (CookieUtil.frequency_limit(user.getUuid())) {
+            return ServerResponse.createByErrorMessage("请求过于频繁");
+        }
+        return challengeService.attack(user.getId(), challengeId);
     }
 }

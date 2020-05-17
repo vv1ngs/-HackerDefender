@@ -194,7 +194,7 @@
     <select id="checkId" parameterType="int" resultType="int">
         select count(1)
         from hackerdefender_challenge
-        where challenge_id=#{challengeId}
+        where id=#{challengeId}
     </select>
     <select id="selectAll" resultMap="BaseResultMap">
         select
@@ -207,5 +207,11 @@
         from hackerdefender_challenge
         where name=#{name}
         order by id desc LIMIT 1;
+    </select>
+    <select id="selectScript" resultType="string" parameterType="int">
+        select
+        script_url
+        from hackerdefender_challenge
+        where id=#{challengeId}
     </select>
 </mapper>
