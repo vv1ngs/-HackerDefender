@@ -3,6 +3,7 @@ package org.hackDefender.task;
 import org.hackDefender.service.ContainerService;
 import org.hackDefender.util.RedisPoolSharedUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,7 +17,7 @@ public class closeContainerTask {
     @Autowired
     private ContainerService containerService;
 
-
+    @Scheduled(cron = "0/10 * *  * * ?")
     public void AutoCloseContainer() {
         if (RedisPoolSharedUtil.trylock("close_lock", 5)) {
             close("close_lock");
@@ -27,6 +28,5 @@ public class closeContainerTask {
         RedisPoolSharedUtil.expire(lockName, 5);
         containerService.AutoCloseContainer();
         RedisPoolSharedUtil.del(lockName);
-
     }
 }

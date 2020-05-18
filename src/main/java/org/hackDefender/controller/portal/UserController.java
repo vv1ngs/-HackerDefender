@@ -122,9 +122,9 @@ public class UserController {
             return ServerResponse.createByErrorCode(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
         }
         ServerResponse serverResponse = userService.openShell(user.getId());
-        if (serverResponse.isSuccess()) {
+        /*if (serverResponse.isSuccess()) {
             httpServerResponse.sendRedirect("/index.jsp?containerId=" + serverResponse.getData());
-        }
+        }*/
         return serverResponse;
     }
 }

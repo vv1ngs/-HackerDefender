@@ -67,6 +67,7 @@ public class Example {
                 }
             }
         }
+        System.out.println(a.length());
         System.out.println(a);
     }
 }

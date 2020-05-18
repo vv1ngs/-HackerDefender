@@ -27,13 +27,13 @@ public class ContainerExecWSHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         String ip = "127.0.0.1";
         String containerId = session.getAttributes().get("containerId").toString();
-        //创建bash
-        String execId = DockerUtil.execContainer();
-        //连接bash
+        /*防止爆破*/
+        if (containerId.length() != 32) {
+            return;
+        }
+        String execId = DockerUtil.execContainer(containerId);
         Socket socket = connectExec(ip, execId);
-        //获得输出
         getExecMessage(session, ip, containerId, socket);
-
     }
 
     private Socket connectExec(String ip, String execId) throws IOException {
