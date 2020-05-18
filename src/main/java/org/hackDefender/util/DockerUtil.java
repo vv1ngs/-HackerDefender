@@ -48,7 +48,6 @@ public class DockerUtil {
         taskSpec.withContainerSpec(new ContainerSpec().withImage(dockerImage));
         taskSpec.withResources(new ResourceRequirements().withLimits(new ResourceSpecs().withNanoCPUs(cupL).withMemoryBytes(meL)));
         taskSpec.withPlacement(new ServicePlacement().withConstraints(Lists.<String>newArrayList("node.labels.name==linux-1")));
-
         ServiceSpec serviceSpec = new ServiceSpec().withName(localIp)
                 .withNetworks(Lists.newArrayList(new NetworkAttachmentConfig().withTarget("test_frp_containers")))
                 .withEndpointSpec(new EndpointSpec().withMode(EndpointResolutionMode.DNSRR))
@@ -67,7 +66,7 @@ public class DockerUtil {
             }
         }
         list.add(containerPort);
-        list.add(ContainId);
+        list.add(ContainId.substring(0, 32));
         return list;
     }
 
@@ -82,9 +81,9 @@ public class DockerUtil {
         }
     }
 
-    public static String execContainer() {
+    public static String execContainer(String containerId) {
         DockerClient dockerClient = getDockerClient();
-        ExecCreateCmdResponse exec = dockerClient.execCreateCmd("07bf38510cd9").withAttachStdin(true).withAttachStderr(true).withAttachStdout(true)
+        ExecCreateCmdResponse exec = dockerClient.execCreateCmd("").withAttachStdin(true).withAttachStderr(true).withAttachStdout(true)
                 .withCmd().withTty(true).withCmd("sh").exec();
         return exec.getId();
     }

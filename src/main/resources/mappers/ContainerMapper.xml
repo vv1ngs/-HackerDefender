@@ -6,8 +6,8 @@
             <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
             <arg column="user_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
             <arg column="challenge_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
-            <arg column="container_id" jdbcType="VARCHAR" javaType="java.lang.String"/>
             <arg column="renew_count" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="container_id" jdbcType="VARCHAR" javaType="java.lang.String"/>
             <arg column="uuid" jdbcType="VARCHAR" javaType="java.lang.String"/>
             <arg column="port" jdbcType="INTEGER" javaType="java.lang.Integer"/>
             <arg column="status" jdbcType="BIT" javaType="java.lang.Boolean"/>
