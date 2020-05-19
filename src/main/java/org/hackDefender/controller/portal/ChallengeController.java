@@ -136,6 +136,6 @@ public class ChallengeController {
         if (CookieUtil.frequency_limit(user.getUuid())) {
             return ServerResponse.createByErrorMessage("请求过于频繁");
         }
-        return challengeService.attack(user.getId(), challengeId);
+        return challengeService.attack(user.getId());
     }
 }
