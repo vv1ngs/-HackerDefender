@@ -21,5 +21,5 @@ public interface ChallengeService {
 
     ServerResponse<PageInfo> listChallenge(int pageNum, int pageSize);
 
-    ServerResponse attack(Integer useId, Integer challengeId);
+    ServerResponse attack(Integer useId);
 }

@@ -38,11 +38,12 @@ public class FrpUtil {
 
     public static void rewriteFrp(List<List<String>> lists) {
         StringBuilder builder = new StringBuilder();
+        builder.append(PropertiesUtil.getProperty("frpc_template"));
         for (List<String> list : lists) {
-            String localIp = list.get(1);
-            String localPort = list.get(2);
-            String remotePort = list.get(3);
-            String newBuffer = PropertiesUtil.getProperty("frpc_template") + String.format(template, localIp, localIp, localPort, remotePort, localIp, localIp, localPort, remotePort);
+            String localIp = list.get(0);
+            String localPort = list.get(1);
+            String remotePort = list.get(2);
+            String newBuffer = String.format(template, localIp, localIp, localPort, remotePort, localIp, localIp, localPort, remotePort);
             builder.append(newBuffer);
         }
         HttpClientUtil.putRequest(putURL, builder.toString());

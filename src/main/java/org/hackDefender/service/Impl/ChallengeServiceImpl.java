@@ -18,6 +18,7 @@ import org.hackDefender.pojo.Container;
 import org.hackDefender.pojo.User;
 import org.hackDefender.service.ChallengeService;
 import org.hackDefender.util.FtpUtil;
+import org.hackDefender.util.PropertiesUtil;
 import org.hackDefender.util.PythonUtil;
 import org.hackDefender.util.UUIDUtil;
 import org.hackDefender.vo.ChallengeVo;
@@ -90,7 +91,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Override
     public ServerResponse uploadScript(MultipartFile file, Integer challengId, String path) {
         if (file == null) {
-            return ServerResponse.createByErrorMessage("错误");
+            return ServerResponse.createByErrorMessage("文件错误");
         }
         String fileName = file.getOriginalFilename();
         String filExtionName = fileName.substring(fileName.lastIndexOf(".") + 1);
@@ -108,7 +109,7 @@ public class ChallengeServiceImpl implements ChallengeService {
             targetFile.delete();
             Map map = Maps.newHashMap();
             map.put("uri", targetFile.getName());
-            map.put("url", "http://118.24.120.71" + targetFile.getName());
+            map.put("url", "http://118.24.120.71:8081/static" + targetFile.getName());
             Challenge challenge = new Challenge();
             challenge.setId(challengId);
             challenge.setScriptUrl(targetFile.getName());
@@ -159,12 +160,16 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     @Override
-    public ServerResponse attack(Integer userId, Integer challengeId) {
-        String ScriptUrl = challengeMapper.selectScript(challengeId);
+    public ServerResponse attack(Integer userId) {
+        Container container = containerMapper.selectByUid(userId);
+        if (container == null) {
+            return ServerResponse.createByErrorMessage("还未创建实例");
+        }
+        String ScriptUrl = challengeMapper.selectScript(container.getChallengeId());
         if (StringUtils.isEmpty(ScriptUrl)) {
             return ServerResponse.createByErrorMessage("该题暂无攻击文本");
         }
-        Container container = containerMapper.selectByUid(userId);
-        return PythonUtil.exec(ScriptUrl, "http://127.0.0.1:" + container.getPort());
+        String frpUrl = PropertiesUtil.getProperty("frpc_server", "118.24.120.71");
+        return PythonUtil.exec(ScriptUrl, frpUrl + ":" + container.getPort());
     }
 }

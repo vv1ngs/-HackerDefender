@@ -31,7 +31,7 @@ public class DockerUtil {
                 .build();
     }
 
-    public static List<String> addContainer(Integer userId, String uuid, Integer challengePort, String dockerImage, String meLimit, Double cupLimit) {
+    public static Map<String, String> addContainer(Integer userId, String uuid, Integer challengePort, String dockerImage, String meLimit, Double cupLimit) {
         Map<String, String> map = Maps.newHashMap();
         List<String> list = Lists.newArrayList();
         Long meL = Long.valueOf(meLimit.substring(0, meLimit.length() - 1)) * 1024 * 1024;
@@ -65,9 +65,12 @@ public class DockerUtil {
                 }
             }
         }
+        map.clear();
+        map.put("containerPort", containerPort);
+        map.put("ContainId", ContainId.substring(0, 32));
         list.add(containerPort);
         list.add(ContainId.substring(0, 32));
-        return list;
+        return map;
     }
 
     public static void removeContainer(Integer userId, String uuid) {

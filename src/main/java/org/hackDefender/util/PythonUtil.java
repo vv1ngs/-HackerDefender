@@ -12,7 +12,6 @@ import java.io.InputStreamReader;
  */
 public class PythonUtil {
     static final String pythonUrl = PropertiesUtil.getProperty("python_path", "C:\\Users\\22080\\Desktop\\1.py");
-    String[] cmd = new String[]{"C:\\python3\\python3.exe", "C:\\Users\\22080\\Desktop\\1.py", "1.py"};
 
     public static ServerResponse exec(String ScripUrl, String TargetUrl) {
         String[] cmd = new String[]{"C:\\python3\\python3.exe", pythonUrl, ScripUrl, TargetUrl};

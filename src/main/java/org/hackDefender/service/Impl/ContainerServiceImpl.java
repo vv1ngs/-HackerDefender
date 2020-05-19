@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author vvings
@@ -52,18 +53,18 @@ public class ContainerServiceImpl implements ContainerService {
         }
         String uuid = UUIDUtil.getUUID8();
         Challenge challenge = challengeMapper.selectByPrimaryKey(challengeId);
-        List<String> list = DockerUtil.addContainer(userId, uuid, challenge.getPort(), challenge.getDockerImage(), challenge.getMemoryLimit(), challenge.getCupLimit());
+        Map<String, String> map = DockerUtil.addContainer(userId, uuid, challenge.getPort(), challenge.getDockerImage(), challenge.getMemoryLimit(), challenge.getCupLimit());
         Container container = new Container();
         container.setChallengeId(challengeId);
-        container.setPort(Integer.parseInt(list.get(0)));
-        container.setContainerId(list.get(1));
+        container.setPort(Integer.parseInt(map.get("containerPort")));
+        container.setContainerId(map.get("ContainId"));
         container.setRenewCount(0);
         container.setStatus(true);
         container.setUserId(userId);
         container.setUuid(uuid);
         int rowCount = containerMapper.insert(container);
         if (rowCount == 1) {
-            return ServerResponse.createBySuccess("创建实例成功");
+            return ServerResponse.createBySuccess("创建实例成功", map);
         }
         return ServerResponse.createByErrorMessage("创建实例失败");
     }
@@ -118,8 +119,12 @@ public class ContainerServiceImpl implements ContainerService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, timeout = 1, isolation = Isolation.DEFAULT)
     @Override
     public ServerResponse lengthContainer(Integer userId) {
-        int renewCount = containerMapper.selectRenewCountById(userId);
-        if (renewCount > Integer.parseInt(PropertiesUtil.getProperty("renew_count"))) {
+        int Count = containerMapper.checkUid(userId);
+        if (Count == 0) {
+            return ServerResponse.createByErrorMessage("还未创建实例");
+        }
+        Count = containerMapper.selectRenewCountById(userId);
+        if (Count > Integer.parseInt(PropertiesUtil.getProperty("renew_count"))) {
             return ServerResponse.createByErrorMessage("已超过最大延长次数");
         }
         Container container = containerMapper.selectByUidAndCId(userId);
