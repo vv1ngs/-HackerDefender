@@ -2,6 +2,7 @@ package org.hackDefender.service.Impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang.time.DateUtils;
 import org.hackDefender.common.ResponseCode;
 import org.hackDefender.common.ServerResponse;
@@ -74,13 +75,29 @@ public class ContainerServiceImpl implements ContainerService {
         Date closeDate = DateUtils.addSeconds(new Date(), -Integer.parseInt(PropertiesUtil.getProperty("container_lasttime", "3600")));
         List<Container> containerList = containerMapper.selectByTime(DateTimeUtil.DateToString(closeDate));
         for (Container container : containerList) {
-            DockerUtil.removeContainer(container.getUserId(), container.getUuid());
+            //DockerUtil.removeContainer(container.getUserId(), container.getUuid());
             int port = container.getPort();
             if (port != 0) {
                 RedisPoolSharedUtil.sAdd(port);
             }
             containerMapper.deleteByPrimaryKey(container.getId());
         }
+
+    }
+
+    @Override
+    public void updateFrp() {
+        List<Container> containerList = containerMapper.selectAll();
+        List<List<String>> lists = Lists.newArrayList();
+        for (Container container : containerList) {
+            List<String> list = Lists.newArrayList();
+            Challenge challenge = challengeMapper.selectByPrimaryKey(container.getChallengeId());
+            list.add(container.getUserId() + "-" + container.getUuid());
+            list.add(String.valueOf(challenge.getPort()));
+            list.add(String.valueOf(container.getPort()));
+            lists.add(list);
+        }
+        FrpUtil.rewriteFrp(lists);
     }
 
     @Override
