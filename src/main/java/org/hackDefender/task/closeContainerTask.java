@@ -19,7 +19,7 @@ public class closeContainerTask {
 
     @Scheduled(cron = "0/10 * *  * * ?")
     public void AutoCloseContainer() {
-        if (RedisPoolSharedUtil.trylock("close_lock", 5)) {
+        if (RedisPoolSharedUtil.trylock("close_lock", 5000)) {
             close("close_lock");
         }
     }
@@ -27,6 +27,7 @@ public class closeContainerTask {
     private void close(String lockName) {
         RedisPoolSharedUtil.expire(lockName, 5);
         containerService.AutoCloseContainer();
+        containerService.updateFrp();
         RedisPoolSharedUtil.del(lockName);
     }
 }

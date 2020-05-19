@@ -18,4 +18,6 @@ public interface ContainerService {
     ServerResponse lengthContainer(Integer userId);
 
     ServerResponse<ContainerVo> removeContainer(Integer userId);
+
+    void updateFrp();
 }

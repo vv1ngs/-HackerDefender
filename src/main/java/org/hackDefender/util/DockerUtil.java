@@ -38,7 +38,7 @@ public class DockerUtil {
         Long cupL = new Double(cupLimit * 1e9).longValue();
         String localIp = String.valueOf(userId) + "-" + uuid;
         String containerPort = null;
-        if (RedisPoolSharedUtil.trylock("portPop_lock", 5)) {
+        if (RedisPoolSharedUtil.trylock("portPop_lock", 5000)) {
             containerPort = RedisPoolSharedUtil.sPop();
             RedisPoolSharedUtil.del("portPop_lock");
         }
@@ -55,7 +55,7 @@ public class DockerUtil {
                 .withLabels(map)
                 .withMode(new ServiceModeConfig().withReplicated(new ServiceReplicatedModeOptions().withReplicas(1)));
         dockerClient.createServiceCmd(serviceSpec).exec();
-        FrpUtil.rewriteFrp(localIp, challengePort, containerPort);
+        //FrpUtil.rewriteFrp(localIp, challengePort, containerPort);
         String ContainId = null;
         while (ContainId == null) {
             List<Task> testService = dockerClient.listTasksCmd().withNameFilter(localIp).exec();

@@ -46,7 +46,7 @@ public class ChallengeController {
             return ServerResponse.createBySuccess(user);
         }
         if (CookieUtil.frequency_limit(user.getUuid())) {
-            return ServerResponse.createByErrorMessage("请求过于频繁");
+            return ServerResponse.createByErrorCode(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
         }
         return containerService.addContainer(challengeId, user.getId());
     }

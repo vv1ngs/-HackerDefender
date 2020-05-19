@@ -30,7 +30,7 @@
   </delete>
     <insert id="insert" parameterType="org.hackDefender.pojo.Container">
     insert into challenge_container (id, user_id, challenge_id, 
-      renew_count, uuid, ,container_id,port,
+      renew_count, uuid, container_id,port,
       status, create_time, update_time
       )
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{challengeId,jdbcType=INTEGER}, 

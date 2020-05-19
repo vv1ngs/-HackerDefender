@@ -127,7 +127,8 @@ public class ChallengeServiceImpl implements ChallengeService {
             if (challenge.getId() != null) {
                 int rowCount = challengeMapper.updateByPrimaryKeySelective(challenge);
                 if (rowCount > 0) {
-                    return ServerResponse.createBySuccess("更新题目成功", challenge);
+                    Challenge updated = challengeMapper.selectByPrimaryKey(challenge.getId());
+                    return ServerResponse.createBySuccess("更新题目成功", updated);
                 }
                 return ServerResponse.createByErrorMessage("更新题目失败");
             } else {

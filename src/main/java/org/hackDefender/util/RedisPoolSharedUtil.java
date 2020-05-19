@@ -176,7 +176,8 @@ public class RedisPoolSharedUtil {
     public static boolean trylock(String key, int timeout) {
         Long endtime = timeout + System.currentTimeMillis();
         long lockTime = Long.parseLong(PropertiesUtil.getProperty("lock.time", "5000"));
-        while (System.currentTimeMillis() > endtime) {
+        System.out.println(System.currentTimeMillis());
+        while (System.currentTimeMillis() < endtime) {
             Long setResult = RedisPoolSharedUtil.setNx(key, String.valueOf(System.currentTimeMillis() + timeout));
             if (setResult != null && setResult.intValue() == 1) {
                 return true;
