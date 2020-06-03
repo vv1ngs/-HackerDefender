@@ -43,6 +43,7 @@ public class JacksonUtil {
         } catch (JsonProcessingException e) {
             log.warn("Parse object to  String error", e);
             return null;
+
         }
     }
 

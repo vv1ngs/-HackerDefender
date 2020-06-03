@@ -12,6 +12,7 @@ public enum ResponseCode {
     ILLEGAL_ARGUMENT(2, "ILLEGAL_ARGUMENT"),
     NEED_ADD_CONTAINER(3, "NEED_ADD_CONTAINER"),
     PERMISSION_DENIED(4, "PERMISSION_DENIED");
+    
     private final int code;
 
     private final String desc;

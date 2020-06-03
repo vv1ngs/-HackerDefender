@@ -16,8 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -31,21 +29,6 @@ public class AuthorityInterceptor implements HandlerInterceptor {
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         String method = handlerMethod.getMethod().getName();
         String classname = handlerMethod.getBean().getClass().getSimpleName();
-        StringBuffer requestParamBuffer = new StringBuffer();
-        Map paramMap = request.getParameterMap();
-        Iterator iterator = paramMap.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry entry = (Map.Entry) iterator.next();
-            String mapKey = (String) entry.getKey();
-            String mapValue = StringUtils.EMPTY;
-            Object obj = entry.getValue();
-            if (obj instanceof String[]) {
-                String[] strs = (String[]) obj;
-                mapValue = Arrays.toString(strs);
-
-            }
-            requestParamBuffer.append(mapKey).append("=").append(mapValue);
-        }
         if (StringUtils.equals(classname, "UserManageController") && StringUtils.equals(method, "login")) {
             log.info("权限拦截器拦截到请求,className:{},methodName:{}", classname, method);
             return true;
