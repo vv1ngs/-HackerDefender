@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.hackDefender.dao.UserMapper">
+    <resultMap id="BaseResultMap" type="org.hackDefender.pojo.User">
+        <constructor>
+            <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="uuid" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="username" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="password" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="email" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="phone" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="role" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="golden_count" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+            <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, uuid,username, password, email, phone, role, golden_count, create_time, update_time
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from hackerdefender_user
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from hackerdefender_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="org.hackDefender.pojo.User">
+    insert into hackerdefender_user (id, uuid,username, password,
+      email, phone, role,
+      golden_count, create_time, update_time
+      )
+    values (#{id,jdbcType=INTEGER},#{uuid,jdbcType=VARCHAR} ,#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+      #{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{role,jdbcType=INTEGER},
+      #{goldenCount,jdbcType=INTEGER}, now(), now()
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="org.hackDefender.pojo.User">
+        insert into hackerdefender_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="uuid != null">
+                uuid,
+            </if>
+            <if test="username != null">
+                username,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="role != null">
+                role,
+            </if>
+            <if test="goldenCount != null">
+                golden_count,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="uuid != null">
+                #{uuid,jdbcType=VARCHAR},
+            </if>
+            <if test="username != null">
+                #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="role != null">
+                #{role,jdbcType=INTEGER},
+            </if>
+            <if test="goldenCount != null">
+                #{goldenCount,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                now(),
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="org.hackDefender.pojo.User">
+        update hackerdefender_user
+        <set>
+            <if test="uuid != null">
+                uuid = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="username != null">
+                username = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="role != null">
+                role = #{role,jdbcType=INTEGER},
+            </if>
+            <if test="goldenCount != null">
+                golden_count = #{goldenCount,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = now(),
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="org.hackDefender.pojo.User">
+    update hackerdefender_user
+    set {uuid = #{uuid,jdbcType=VARCHAR},
+        username = #{username,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      role = #{role,jdbcType=INTEGER},
+      golden_count = #{goldenCount,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = now()
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+    <select id="checkUsername" parameterType="string" resultType="int">
+        select count(1) from hackerdefender_user
+        where username = #{username}
+    </select>
+    <select id="selectLogin" parameterType="map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from hackerdefender_user
+        where username = #{username}
+        and password = #{password}
+    </select>
+
+    <select id="checkEmail" resultType="int" parameterType="string">
+        select count(1)
+        from hackerdefender_user
+        where email = #{email}
+    </select>
+    <select id="checkPhoneByUserId" resultType="int" parameterType="map">
+        select count(1)
+        from hackerdefender_user
+        where phone = #{phone} and id != #{id}
+    </select>
+    <select id="checkPassword" resultType="int" parameterType="map">
+        select count(1)
+        from hackerdefender_user
+        where password = #{md5password} and id = #{id}
+    </select>
+    <select id="checkEmailByUserId" parameterType="map" resultType="int">
+        select
+        count(1)
+        from hackerdefender_user
+        where id != #{id} and email = #{email}
+    </select>
+</mapper>
