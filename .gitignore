@@ -28,3 +28,7 @@ target/
 #system ignore
 .DS_Store
 Thumbs.db
+/src/main/resources.dev/
+/src/main/resources.beta/
+/src/main/resources/
+

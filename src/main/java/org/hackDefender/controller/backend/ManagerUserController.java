@@ -3,7 +3,6 @@ package org.hackDefender.controller.backend;
 import org.hackDefender.common.Const;
 import org.hackDefender.common.ServerResponse;
 import org.hackDefender.pojo.User;
-import org.hackDefender.service.ManagerService;
 import org.hackDefender.service.UserService;
 import org.hackDefender.util.CookieUtil;
 import org.hackDefender.util.JacksonUtil;
@@ -24,8 +23,6 @@ import javax.servlet.http.HttpSession;
 @Controller
 @RequestMapping("/manage/user")
 public class ManagerUserController {
-    @Autowired
-    private ManagerService managerService;
     @Autowired
     private UserService userService;
 
