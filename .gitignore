@@ -30,5 +30,5 @@ target/
 Thumbs.db
 /src/main/resources.dev/
 /src/main/resources.beta/
-/src/main/resources/
+
 
