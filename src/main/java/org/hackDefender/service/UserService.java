@@ -18,5 +18,5 @@ public interface UserService {
 
     ServerResponse<String> resetPassword(User user, String passwordOld, String passwordNew);
 
-    ServerResponse openShell(Integer id);
+    ServerResponse openShell(Integer userId);
 }

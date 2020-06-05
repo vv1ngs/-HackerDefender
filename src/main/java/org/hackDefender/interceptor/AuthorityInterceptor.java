@@ -27,39 +27,49 @@ public class AuthorityInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HandlerMethod handlerMethod = (HandlerMethod) handler;
-        String method = handlerMethod.getMethod().getName();
-        String classname = handlerMethod.getBean().getClass().getSimpleName();
-        if (StringUtils.equals(classname, "UserManageController") && StringUtils.equals(method, "login")) {
-            log.info("权限拦截器拦截到请求,className:{},methodName:{}", classname, method);
+        RequestLogin requestLogin = handlerMethod.getMethod().getDeclaringClass().getAnnotation(RequestLogin.class);
+        if (requestLogin == null) {//如果类上的注解为空
+            requestLogin = handlerMethod.getMethod().getAnnotation(RequestLogin.class);
+            if (requestLogin == null) {
+                return true;
+            }
+        }
+        if (Permission.REQUEST_NONE.equals(requestLogin.desc())) {
             return true;
         }
+        //需要登录
         User user = null;
         String loginToken = CookieUtil.readLoginToken(request);
         if (StringUtils.isNotEmpty(loginToken)) {
             String userJsonStr = RedisPoolSharedUtil.get(loginToken);
             user = JacksonUtil.String2ToObj(userJsonStr, User.class);
         }
-        if (user == null || (user.getRole().intValue() != Const.Role.ROLE_ADMIN)) {
-            response.reset();
-            response.setCharacterEncoding("UTF-8");
-            response.setContentType("application/json;charset=UTF-8");
+        response.reset();
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json;charset=UTF-8");
+        if (user == null) {
             PrintWriter out = response.getWriter();
-            if (user == null) {
-                Map resultMap = Maps.newHashMap();
-                resultMap.put("success", false);
-                resultMap.put("msg", ResponseCode.NEED_LOGIN.getDesc());
-                resultMap.put("status", ResponseCode.NEED_LOGIN.getCode());
-                out.print(JacksonUtil.ObjToString(resultMap));
-            } else {
-                Map resultMap = Maps.newHashMap();
-                resultMap.put("success", false);
-                resultMap.put("msg", ResponseCode.PERMISSION_DENIED.getDesc());
-                resultMap.put("status", ResponseCode.PERMISSION_DENIED.getCode());
-                out.print(JacksonUtil.ObjToString(resultMap));
-            }
+            Map resultMap = Maps.newHashMap();
+            resultMap.put("success", false);
+            resultMap.put("msg", ResponseCode.NEED_LOGIN.getDesc());
+            resultMap.put("status", ResponseCode.NEED_LOGIN.getCode());
+            out.print(JacksonUtil.ObjToString(resultMap));
             out.flush();
             out.close();
             return false;
+        }
+        if (Permission.REQUEST_LOGIN.equals(requestLogin.desc())) {
+            request.setAttribute("user", user);
+            return true;
+        } else if (Permission.REQUEST_ADMIN.equals(requestLogin.desc()) && (user.getRole().intValue() != Const.Role.ROLE_ADMIN)) {
+            PrintWriter out = response.getWriter();
+            Map resultMap = Maps.newHashMap();
+            resultMap.put("success", false);
+            resultMap.put("msg", ResponseCode.PERMISSION_DENIED.getDesc());
+            resultMap.put("status", ResponseCode.PERMISSION_DENIED.getCode());
+            out.print(JacksonUtil.ObjToString(resultMap));
+            out.flush();
+            out.close();
         }
         return true;
     }

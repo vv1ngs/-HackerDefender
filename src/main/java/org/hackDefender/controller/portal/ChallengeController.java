@@ -1,15 +1,13 @@
 package org.hackDefender.controller.portal;
 
 import com.github.pagehelper.PageInfo;
-import org.apache.commons.lang3.StringUtils;
 import org.hackDefender.common.ResponseCode;
 import org.hackDefender.common.ServerResponse;
+import org.hackDefender.interceptor.RequestLogin;
 import org.hackDefender.pojo.User;
 import org.hackDefender.service.ChallengeService;
 import org.hackDefender.service.ContainerService;
 import org.hackDefender.util.CookieUtil;
-import org.hackDefender.util.JacksonUtil;
-import org.hackDefender.util.RedisPoolSharedUtil;
 import org.hackDefender.vo.ContainerVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,16 +33,9 @@ public class ChallengeController {
 
     @RequestMapping(value = "add_container.do", method = RequestMethod.POST)
     @ResponseBody
+    @RequestLogin
     public ServerResponse<User> addContainer(Integer challengeId, HttpServletRequest httpServletRequest) {
-        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
-        if (StringUtils.isEmpty(loginToken)) {
-            return ServerResponse.createByErrorCode(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
-        }
-        String userJsonStr = RedisPoolSharedUtil.get(loginToken);
-        User user = JacksonUtil.String2ToObj(userJsonStr, User.class);
-        if (user == null) {
-            return ServerResponse.createBySuccess(user);
-        }
+        User user = (User) httpServletRequest.getAttribute("user");
         if (CookieUtil.frequency_limit(user.getUuid())) {
             return ServerResponse.createByErrorCode(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
         }
@@ -53,32 +44,18 @@ public class ChallengeController {
 
     @RequestMapping(value = "get_container.do", method = RequestMethod.GET)
     @ResponseBody
+    @RequestLogin
     public ServerResponse<ContainerVo> getContainer(Integer challengeId, HttpServletRequest httpServletRequest) {
-        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
-        if (StringUtils.isEmpty(loginToken)) {
-            return ServerResponse.createByErrorCode(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
-        }
-        String userJsonStr = RedisPoolSharedUtil.get(loginToken);
-        User user = JacksonUtil.String2ToObj(userJsonStr, User.class);
-        if (user == null) {
-            return ServerResponse.createByErrorCode(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
-        }
+        User user = (User) httpServletRequest.getAttribute("user");
 
         return challengeService.getChallenge(challengeId, user.getId());
     }
 
     @RequestMapping(value = "length_container.do", method = RequestMethod.GET)
     @ResponseBody
+    @RequestLogin
     public ServerResponse<ContainerVo> lengthContainer(Integer challengeId, HttpServletRequest httpServletRequest) {
-        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
-        if (StringUtils.isEmpty(loginToken)) {
-            return ServerResponse.createByErrorCode(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
-        }
-        String userJsonStr = RedisPoolSharedUtil.get(loginToken);
-        User user = JacksonUtil.String2ToObj(userJsonStr, User.class);
-        if (user == null) {
-            return ServerResponse.createByErrorCode(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
-        }
+        User user = (User) httpServletRequest.getAttribute("user");
         if (CookieUtil.frequency_limit(user.getUuid())) {
             return ServerResponse.createByErrorMessage("请求过于频繁");
         }
@@ -87,16 +64,9 @@ public class ChallengeController {
 
     @RequestMapping(value = "del_container.do", method = RequestMethod.GET)
     @ResponseBody
+    @RequestLogin
     public ServerResponse<ContainerVo> deleteContainer(HttpServletRequest httpServletRequest) {
-        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
-        if (StringUtils.isEmpty(loginToken)) {
-            return ServerResponse.createByErrorCode(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
-        }
-        String userJsonStr = RedisPoolSharedUtil.get(loginToken);
-        User user = JacksonUtil.String2ToObj(userJsonStr, User.class);
-        if (user == null) {
-            return ServerResponse.createByErrorCode(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
-        }
+        User user = (User) httpServletRequest.getAttribute("user");
         if (CookieUtil.frequency_limit(user.getUuid())) {
             return ServerResponse.createByErrorMessage("请求过于频繁");
         }
@@ -105,16 +75,9 @@ public class ChallengeController {
 
     @RequestMapping(value = "list_challenge.do", method = RequestMethod.GET)
     @ResponseBody
+    @RequestLogin
     public ServerResponse<PageInfo> listChallenge(HttpServletRequest httpServletRequest, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pagerSize", defaultValue = "10") int pagerSize) {
-        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
-        if (StringUtils.isEmpty(loginToken)) {
-            return ServerResponse.createByErrorCode(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
-        }
-        String userJsonStr = RedisPoolSharedUtil.get(loginToken);
-        User user = JacksonUtil.String2ToObj(userJsonStr, User.class);
-        if (user == null) {
-            return ServerResponse.createByErrorCode(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
-        }
+        User user = (User) httpServletRequest.getAttribute("user");
         if (CookieUtil.frequency_limit(user.getUuid())) {
             return ServerResponse.createByErrorMessage("请求过于频繁");
         }
@@ -123,16 +86,9 @@ public class ChallengeController {
 
     @RequestMapping(value = "attack.do", method = RequestMethod.GET)
     @ResponseBody
+    @RequestLogin
     public ServerResponse attack(HttpServletRequest httpServletRequest, Integer challengeId) {
-        String loginToken = CookieUtil.readLoginToken(httpServletRequest);
-        if (StringUtils.isEmpty(loginToken)) {
-            return ServerResponse.createByErrorCode(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
-        }
-        String userJsonStr = RedisPoolSharedUtil.get(loginToken);
-        User user = JacksonUtil.String2ToObj(userJsonStr, User.class);
-        if (user == null) {
-            return ServerResponse.createByErrorCode(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
-        }
+        User user = (User) httpServletRequest.getAttribute("user");
         if (CookieUtil.frequency_limit(user.getUuid())) {
             return ServerResponse.createByErrorMessage("请求过于频繁");
         }

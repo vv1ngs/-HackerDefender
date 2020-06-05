@@ -76,7 +76,7 @@ public class ContainerServiceImpl implements ContainerService {
         Date closeDate = DateUtils.addSeconds(new Date(), -Integer.parseInt(PropertiesUtil.getProperty("container_lasttime", "3600")));
         List<Container> containerList = containerMapper.selectByTime(DateTimeUtil.DateToString(closeDate));
         for (Container container : containerList) {
-            //DockerUtil.removeContainer(container.getUserId(), container.getUuid());
+            DockerUtil.removeContainer(container.getUserId(), container.getUuid());
             int port = container.getPort();
             if (port != 0) {
                 RedisPoolSharedUtil.sAdd(port);

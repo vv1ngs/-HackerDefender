@@ -2,6 +2,8 @@ package org.hackDefender.controller.backend;
 
 import com.github.pagehelper.PageInfo;
 import org.hackDefender.common.ServerResponse;
+import org.hackDefender.interceptor.Permission;
+import org.hackDefender.interceptor.RequestLogin;
 import org.hackDefender.pojo.Challenge;
 import org.hackDefender.service.ChallengeService;
 import org.hackDefender.service.ContainerService;
@@ -21,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @RequestMapping("/manage/challenge")
 @Controller
+@RequestLogin(desc = Permission.REQUEST_ADMIN)
 public class ManagerChallengeController {
     @Autowired
     private ContainerService containerService;

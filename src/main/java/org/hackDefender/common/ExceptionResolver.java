@@ -25,4 +25,6 @@ public class ExceptionResolver implements HandlerExceptionResolver {
         modelAndView.addObject("data", ex.toString());
         return modelAndView;
     }
+    
+
 }

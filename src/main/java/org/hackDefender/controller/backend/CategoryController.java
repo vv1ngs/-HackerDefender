@@ -1,6 +1,8 @@
 package org.hackDefender.controller.backend;
 
 import org.hackDefender.common.ServerResponse;
+import org.hackDefender.interceptor.Permission;
+import org.hackDefender.interceptor.RequestLogin;
 import org.hackDefender.pojo.Category;
 import org.hackDefender.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +20,14 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/manage/category/")
+@RequestLogin(desc = Permission.REQUEST_ADMIN)
 public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
     @RequestMapping(value = "add_category.do", method = RequestMethod.POST)
     @ResponseBody
+
     public ServerResponse addCategory(String categoryName, @RequestParam(value = "parentId", defaultValue = "0") int parentId) {
         return categoryService.addCategory(categoryName, parentId);
     }

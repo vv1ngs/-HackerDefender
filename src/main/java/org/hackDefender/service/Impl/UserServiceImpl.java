@@ -90,7 +90,9 @@ public class UserServiceImpl implements UserService {
         return ServerResponse.createBySuccess("校验成功");
     }
 
+    @Override
     public ServerResponse<User> getInformation(Integer id) {
+
         User user = userMapper.selectByPrimaryKey(id);
         if (user == null) {
             return ServerResponse.createByErrorCode(ResponseCode.NEED_ADD_CONTAINER.getCode(), "无该用户，请重新登录");
@@ -139,8 +141,9 @@ public class UserServiceImpl implements UserService {
         return ServerResponse.createByErrorMessage("更新密码失败");
     }
 
-    public ServerResponse openShell(Integer id) {
-        String containerID = containerMapper.selectContainerID(id);
+    public ServerResponse openShell(Integer userId) {
+
+        String containerID = containerMapper.selectContainerID(userId);
         if (containerID == null) {
             return ServerResponse.createByErrorMessage("还没有启动实例");
         } else {
