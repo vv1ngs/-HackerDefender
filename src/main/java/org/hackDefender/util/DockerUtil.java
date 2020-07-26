@@ -6,9 +6,13 @@ import com.github.dockerjava.api.command.ExecCreateCmdResponse;
 import com.github.dockerjava.api.model.*;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
+import com.github.dockerjava.core.command.ExecStartResultCallback;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -19,12 +23,14 @@ import java.util.Map;
 public class DockerUtil {
     private static final Long cupLimit = new Long((long) (1E9 * 0.5));
     private static final Long meLimit = new Long((long) 128 * 1024 * 1024);
+    private static final String SelfDockerApi = "unix:///var/run/docker.sock";
+    private static final String dockerApi1 = PropertiesUtil.getProperty("docker_APIUrl1");
+    private static final String dockerApi2 = PropertiesUtil.getProperty("docker_APIUrl2");
 
-    private static DockerClient getDockerClient() {
-        final String localDockerHost = PropertiesUtil.getProperty("docker_APIUrl", "unix://var/run/docker.sock");
+    private static DockerClient getDockerClient(String dockerApi) {
         final DefaultDockerClientConfig config = DefaultDockerClientConfig
                 .createDefaultConfigBuilder()
-                .withDockerHost(localDockerHost)
+                .withDockerHost(dockerApi)
                 .build();
         return DockerClientBuilder
                 .getInstance(config)
@@ -43,19 +49,18 @@ public class DockerUtil {
             RedisPoolSharedUtil.del("portPop_lock");
         }
         map.put(localIp, localIp);
-        DockerClient dockerClient = getDockerClient();
+        DockerClient dockerClient = getDockerClient(SelfDockerApi);
         TaskSpec taskSpec = new TaskSpec();
         taskSpec.withContainerSpec(new ContainerSpec().withImage(dockerImage));
         taskSpec.withResources(new ResourceRequirements().withLimits(new ResourceSpecs().withNanoCPUs(cupL).withMemoryBytes(meL)));
         taskSpec.withPlacement(new ServicePlacement().withConstraints(Lists.<String>newArrayList("node.labels.name==linux-1")));
         ServiceSpec serviceSpec = new ServiceSpec().withName(localIp)
-                .withNetworks(Lists.newArrayList(new NetworkAttachmentConfig().withTarget("test_frp_containers")))
+                .withNetworks(Lists.newArrayList(new NetworkAttachmentConfig().withTarget("hackerdefender_frp_containers")))
                 .withEndpointSpec(new EndpointSpec().withMode(EndpointResolutionMode.DNSRR))
                 .withTaskTemplate(taskSpec)
                 .withLabels(map)
                 .withMode(new ServiceModeConfig().withReplicated(new ServiceReplicatedModeOptions().withReplicas(1)));
         dockerClient.createServiceCmd(serviceSpec).exec();
-        //FrpUtil.rewriteFrp(localIp, challengePort, containerPort);
         String ContainId = null;
         while (ContainId == null) {
             List<Task> testService = dockerClient.listTasksCmd().withNameFilter(localIp).exec();
@@ -77,24 +82,89 @@ public class DockerUtil {
         Map<String, String> map = Maps.newHashMap();
         String localIp = String.valueOf(userId) + "-" + uuid;
         map.put(localIp, localIp);
-        DockerClient dockerClient = getDockerClient();
+        DockerClient dockerClient = getDockerClient(dockerApi1);
         List<Service> listServicesCmd = dockerClient.listServicesCmd().withLabelFilter(map).exec();
-        for (Service c : listServicesCmd) {
-            dockerClient.removeServiceCmd(c.getId()).exec();
+        if (listServicesCmd.size() != 0) {
+            for (Service c : listServicesCmd) {
+                dockerClient.removeServiceCmd(c.getId()).exec();
+            }
+        }
+        dockerClient = getDockerClient(dockerApi2);
+        listServicesCmd = dockerClient.listServicesCmd().withLabelFilter(map).exec();
+        if (listServicesCmd.size() != 0) {
+            for (Service c : listServicesCmd) {
+                dockerClient.removeServiceCmd(c.getId()).exec();
+            }
+        }
+
+    }
+
+    public static String execContainer(String containerId, String dockerApi) {
+        DockerClient dockerClient = getDockerClient(dockerApi);
+        ExecCreateCmdResponse exec = dockerClient.execCreateCmd(containerId).withAttachStdin(true).withAttachStderr(true).withAttachStdout(true)
+                .withCmd().withTty(true).withCmd("sh").exec();
+        return exec.getId();
+    }
+
+    public static boolean checkUrl(String containerId) {
+        DockerClient dockerClient = getDockerClient(dockerApi1);
+        List<String> containerList = new ArrayList<>();
+        containerList.add(containerId);
+        List<Container> containers = dockerClient.listContainersCmd().withIdFilter(containerList).exec();
+        if (containers.size() == 0) {
+            return false;
+        } else {
+            return true;
         }
     }
 
-    public static String execContainer(String containerId) {
-        DockerClient dockerClient = getDockerClient();
-        ExecCreateCmdResponse exec = dockerClient.execCreateCmd("").withAttachStdin(true).withAttachStderr(true).withAttachStdout(true)
-                .withCmd().withTty(true).withCmd("sh").exec();
-        return exec.getId();
+
+    public static boolean checkLocal(String containerId) {
+        DockerClient dockerClient = getDockerClient(SelfDockerApi);
+        List<String> containerList = new ArrayList<>();
+        containerList.add(containerId);
+        List<Container> containers = dockerClient.listContainersCmd().withIdFilter(containerList).exec();
+        if (containers.size() == 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public static String getLogs(String containerId, String cmd) {
+        String[] str = cmd.split("\\s+");
+        String cmdStdout = null;
+        String cmdStderr = null;
+        DockerClient dockerClient = null;
+        if (checkUrl(containerId)) {
+            dockerClient = getDockerClient(dockerApi1);
+        } else {
+            dockerClient = getDockerClient(dockerApi2);
+        }
+        ExecCreateCmdResponse execCreateCmdResponse = dockerClient.execCreateCmd(containerId)
+                .withAttachStdout(true)
+                .withAttachStderr(true)
+                .withTty(false)
+                .withCmd(str)
+                .exec();
+
+        try (ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+             ByteArrayOutputStream stderr = new ByteArrayOutputStream();
+             ExecStartResultCallback cmdCallback = new ExecStartResultCallback(stdout, stderr)) {
+            dockerClient.execStartCmd(execCreateCmdResponse.getId()).exec(cmdCallback).awaitCompletion();
+            cmdStdout = stdout.toString(StandardCharsets.UTF_8.name());
+            cmdStderr = stderr.toString(StandardCharsets.UTF_8.name());
+        } catch (Exception e) {
+            String format = "Exception was thrown when executing: %s, for container: %s ";
+            throw new IllegalStateException(format, e);
+        }
+        return cmdStdout.isEmpty() ? cmdStderr : cmdStdout;
     }
 
     public static String test() {
         Long cuplimit = new Long((long) (1E9 * 0.5));
         Long melimit = new Long((long) 128 * 1024 * 1024);
-        DockerClient dockerClient = getDockerClient();
+        DockerClient dockerClient = getDockerClient(dockerApi1);
         TaskSpec taskSpec = new TaskSpec().withContainerSpec(new ContainerSpec().withImage("ctftraining/qwb_2019_supersqli"))
                 .withResources(new ResourceRequirements().withLimits(new ResourceSpecs().withNanoCPUs(cuplimit).withMemoryBytes(melimit)))
                 .withPlacement(new ServicePlacement().withConstraints(Lists.<String>newArrayList("node.labels.name==linux-1")));
@@ -115,5 +185,15 @@ public class DockerUtil {
             }
         }
         return a;
+    }
+
+    public static void uploadFile(String localPath, String remotePath, String containerId) {
+        DockerClient dockerClient = null;
+        if (checkUrl(containerId)) {
+            dockerClient = getDockerClient(dockerApi1);
+        } else {
+            dockerClient = getDockerClient(dockerApi2);
+        }
+        dockerClient.copyArchiveToContainerCmd(containerId).withRemotePath(remotePath).withHostResource(localPath).exec();
     }
 }

@@ -5,7 +5,9 @@ import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.ExecCreateCmdResponse;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.google.common.collect.Maps;
+import org.hackDefender.util.DockerUtil;
 import org.hackDefender.util.PropertiesUtil;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,6 +54,11 @@ public class Shell {
         InputStream inputStream = socket.getInputStream();
         byte[] bytes = new byte[1024];
         StringBuffer returnMsg = new StringBuffer();
-        
+
+    }
+
+    @Test
+    public void test() {
+        DockerUtil.addContainer(1, "107fefcd", 28001, "ctftraining/qwb_2019_supersqli", "128", 0.5);
     }
 }

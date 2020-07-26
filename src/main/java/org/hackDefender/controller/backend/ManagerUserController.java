@@ -28,6 +28,7 @@ public class ManagerUserController {
 
     @RequestMapping(value = "login.do", method = RequestMethod.POST)
     @ResponseBody
+
     public ServerResponse<User> login(String username, String password, HttpSession session, HttpServletResponse httpServletResponse) {
         ServerResponse<User> response = userService.login(username, password);
         if (response.isSuccess()) {
@@ -36,7 +37,6 @@ public class ManagerUserController {
                 CookieUtil.writeLoginToken(httpServletResponse, session.getId());
                 RedisPoolSharedUtil.setEx(session.getId(), JacksonUtil.ObjToString(response.getData()), Const.RedisCacheExtime.REDIS_SESSION_EXTIME);
             }
-
         }
         return response;
     }

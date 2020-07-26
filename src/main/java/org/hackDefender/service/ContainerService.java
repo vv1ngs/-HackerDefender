@@ -15,7 +15,7 @@ public interface ContainerService {
 
     ServerResponse<PageInfo> getContainerList(int pageNum, int pageSize);
 
-    ServerResponse lengthContainer(Integer userId);
+    ServerResponse<String> lengthContainer(Integer userId);
 
     ServerResponse<ContainerVo> removeContainer(Integer userId);
 

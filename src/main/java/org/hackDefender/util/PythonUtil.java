@@ -11,10 +11,10 @@ import java.io.InputStreamReader;
  * @version 2020/5/17 19:50
  */
 public class PythonUtil {
-    static final String pythonUrl = PropertiesUtil.getProperty("python_path", "C:\\Users\\22080\\Desktop\\1.py");
+    static final String pythonUrl = PropertiesUtil.getProperty("python_path");
 
     public static ServerResponse exec(String ScripUrl, String TargetUrl) {
-        String[] cmd = new String[]{"C:\\python3\\python3.exe", pythonUrl, ScripUrl, TargetUrl};
+        String[] cmd = new String[]{"python3", pythonUrl, ScripUrl, TargetUrl};
         StringBuilder stringBuilder = new StringBuilder();
         try {
             Process p = Runtime.getRuntime().exec(cmd);
@@ -30,7 +30,7 @@ public class PythonUtil {
             } else {
                 stringBuilder.delete(0, stringBuilder.length());
                 while ((output = er.readLine()) != null) {
-                    System.out.println(output);
+                    stringBuilder.append(output);
                 }
             }
             return ServerResponse.createBySuccess("python执行失败", stringBuilder.toString());

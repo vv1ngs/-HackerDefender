@@ -64,6 +64,7 @@ public class ContainerServiceImpl implements ContainerService {
         container.setUuid(uuid);
         int rowCount = containerMapper.insert(container);
         if (rowCount == 1) {
+            updateFrp();
             return ServerResponse.createBySuccess("创建实例成功", map);
         }
         return ServerResponse.createByErrorMessage("创建实例失败");
@@ -91,12 +92,14 @@ public class ContainerServiceImpl implements ContainerService {
         List<Container> containerList = containerMapper.selectAll();
         List<List<String>> lists = Lists.newArrayList();
         for (Container container : containerList) {
-            List<String> list = Lists.newArrayList();
-            Challenge challenge = challengeMapper.selectByPrimaryKey(container.getChallengeId());
-            list.add(container.getUserId() + "-" + container.getUuid());
-            list.add(String.valueOf(challenge.getPort()));
-            list.add(String.valueOf(container.getPort()));
-            lists.add(list);
+            if (DockerUtil.checkLocal(container.getContainerId())) {
+                List<String> list = Lists.newArrayList();
+                Challenge challenge = challengeMapper.selectByPrimaryKey(container.getChallengeId());
+                list.add(container.getUserId() + "-" + container.getUuid());
+                list.add(String.valueOf(challenge.getPort()));
+                list.add(String.valueOf(container.getPort()));
+                lists.add(list);
+            }
         }
         FrpUtil.rewriteFrp(lists);
     }
@@ -119,20 +122,17 @@ public class ContainerServiceImpl implements ContainerService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, timeout = 1, isolation = Isolation.DEFAULT)
     @Override
     public ServerResponse lengthContainer(Integer userId) {
-        int Count = containerMapper.checkUid(userId);
-        if (Count == 0) {
+        Container container = containerMapper.selectByUidAndCId(userId);
+        if (container == null) {
             return ServerResponse.createByErrorMessage("还未创建实例");
         }
-        Count = containerMapper.selectRenewCountById(userId);
+        int Count = containerMapper.selectRenewCountById(userId);
         if (Count > Integer.parseInt(PropertiesUtil.getProperty("renew_count"))) {
             return ServerResponse.createByErrorMessage("已超过最大延长次数");
         }
-        Container container = containerMapper.selectByUidAndCId(userId);
-        Date date = new Date();
-        container.setCreateTime(date);
-        container.setUpdateTime(date);
-        container.setRenewCount(container.getRenewCount() + 1);
-        containerMapper.updateByPrimaryKeySelective(container);
+        Container containerNew = new Container();
+        containerNew.setRenewCount(container.getRenewCount() + 1);
+        containerMapper.updateByPrimaryKeySelective(containerNew);
         return ServerResponse.createBySuccess();
     }
 

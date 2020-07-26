@@ -27,25 +27,35 @@ public class CategoryController {
 
     @RequestMapping(value = "add_category.do", method = RequestMethod.POST)
     @ResponseBody
-
+    @RequestLogin(desc = Permission.REQUEST_ADMIN)
     public ServerResponse addCategory(String categoryName, @RequestParam(value = "parentId", defaultValue = "0") int parentId) {
         return categoryService.addCategory(categoryName, parentId);
     }
 
+    @RequestMapping(value = "get_deep_category.do", method = RequestMethod.POST)
+    @ResponseBody
+    @RequestLogin(desc = Permission.REQUEST_ADMIN)
+    public ServerResponse<List<Category>> getChildren(Integer categoryId) {
+        return categoryService.selectCategoryAndChildrenById(categoryId);
+    }
+
     @RequestMapping(value = "get_category.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<List<Category>> getChildren(@RequestParam(value = "parentId", defaultValue = "0") Integer parentId) {
+    @RequestLogin(desc = Permission.REQUEST_ADMIN)
+    public ServerResponse<List<Category>> getCategory(@RequestParam(value = "parentId", defaultValue = "0") Integer parentId) {
         return categoryService.getChildrenCategory(parentId);
     }
 
     @RequestMapping(value = "update_category.do", method = RequestMethod.POST)
     @ResponseBody
+    @RequestLogin(desc = Permission.REQUEST_ADMIN)
     public ServerResponse<List<Category>> updateCategory(Integer categoryId, String categoryName) {
         return categoryService.updateCategory(categoryId, categoryName);
     }
 
     @RequestMapping(value = "del_category.do", method = RequestMethod.POST)
     @ResponseBody
+    @RequestLogin(desc = Permission.REQUEST_ADMIN)
     public ServerResponse<List<Category>> delCategory(Integer categoryId) {
         return categoryService.delCategory(categoryId);
     }

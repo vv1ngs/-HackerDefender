@@ -7,20 +7,24 @@
             <arg column="category_id" jdbcType="INTEGER" javaType="java.lang.Integer"/>
             <arg column="name" jdbcType="VARCHAR" javaType="java.lang.String"/>
             <arg column="detail" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="answer" jdbcType="VARCHAR" javaType="java.lang.String"/>
             <arg column="golden" jdbcType="INTEGER" javaType="java.lang.Integer"/>
             <arg column="status" jdbcType="BIT" javaType="java.lang.Boolean"/>
             <arg column="memory_limit" jdbcType="VARCHAR" javaType="java.lang.String"/>
             <arg column="cup_limit" jdbcType="DOUBLE" javaType="java.lang.Double"/>
             <arg column="docker_image" jdbcType="VARCHAR" javaType="java.lang.String"/>
             <arg column="script_url" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="check_url" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="user_upload_path" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="log_path" jdbcType="VARCHAR" javaType="java.lang.String"/>
             <arg column="port" jdbcType="INTEGER" javaType="java.lang.Integer"/>
             <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
             <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
         </constructor>
     </resultMap>
     <sql id="Base_Column_List">
-    id, category_id, name, detail, golden, status, memory_limit, cup_limit, docker_image,
-    script_url, port, create_time, update_time
+    id, category_id, name, detail, answer, golden, status, memory_limit, cup_limit, docker_image, 
+    script_url, check_url, user_upload_path, log_path, port, create_time, update_time
   </sql>
     <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
@@ -33,21 +37,19 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
     <insert id="insert" parameterType="org.hackDefender.pojo.Challenge">
-        <selectKey resultType="int" order="AFTER" keyProperty="id">
-            SELECT LAST_INSERT_ID() AS id
-        </selectKey>
-        insert into hackerdefender_challenge
-        (id, category_id, name,
-        detail, golden, status,
-        memory_limit, cup_limit, docker_image,
-        script_url, port, create_time,
-        update_time)
-        values (#{id,jdbcType=INTEGER}, #{categoryId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
-        #{detail,jdbcType=VARCHAR}, #{golden,jdbcType=INTEGER}, #{status,jdbcType=BIT},
-        #{memoryLimit,jdbcType=VARCHAR}, #{cupLimit,jdbcType=DOUBLE}, #{dockerImage,jdbcType=VARCHAR},
-        #{scriptUrl,jdbcType=VARCHAR}, #{port,jdbcType=INTEGER}, now(),
-        now())
-    </insert>
+    insert into hackerdefender_challenge (id, category_id, name, 
+      detail, answer, golden, 
+      status, memory_limit, cup_limit, 
+      docker_image, script_url, check_url, 
+      user_upload_path, log_path, port, 
+      create_time, update_time)
+    values (#{id,jdbcType=INTEGER}, #{categoryId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
+      #{detail,jdbcType=VARCHAR}, #{answer,jdbcType=VARCHAR}, #{golden,jdbcType=INTEGER}, 
+      #{status,jdbcType=BIT}, #{memoryLimit,jdbcType=VARCHAR}, #{cupLimit,jdbcType=DOUBLE}, 
+      #{dockerImage,jdbcType=VARCHAR}, #{scriptUrl,jdbcType=VARCHAR}, #{checkUrl,jdbcType=VARCHAR}, 
+      #{userUploadPath,jdbcType=VARCHAR}, #{logPath,jdbcType=VARCHAR}, #{port,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
     <insert id="insertSelective" parameterType="org.hackDefender.pojo.Challenge">
         insert into hackerdefender_challenge
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -62,6 +64,9 @@
             </if>
             <if test="detail != null">
                 detail,
+            </if>
+            <if test="answer != null">
+                answer,
             </if>
             <if test="golden != null">
                 golden,
@@ -80,6 +85,15 @@
             </if>
             <if test="scriptUrl != null">
                 script_url,
+            </if>
+            <if test="checkUrl != null">
+                check_url,
+            </if>
+            <if test="userUploadPath != null">
+                user_upload_path,
+            </if>
+            <if test="logPath != null">
+                log_path,
             </if>
             <if test="port != null">
                 port,
@@ -104,6 +118,9 @@
             <if test="detail != null">
                 #{detail,jdbcType=VARCHAR},
             </if>
+            <if test="answer != null">
+                #{answer,jdbcType=VARCHAR},
+            </if>
             <if test="golden != null">
                 #{golden,jdbcType=INTEGER},
             </if>
@@ -122,14 +139,23 @@
             <if test="scriptUrl != null">
                 #{scriptUrl,jdbcType=VARCHAR},
             </if>
+            <if test="checkUrl != null">
+                #{checkUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="userUploadPath != null">
+                #{userUploadPath,jdbcType=VARCHAR},
+            </if>
+            <if test="logPath != null">
+                #{logPath,jdbcType=VARCHAR},
+            </if>
             <if test="port != null">
                 #{port,jdbcType=INTEGER},
             </if>
             <if test="createTime != null">
-                now(),
+                #{createTime,jdbcType=TIMESTAMP},
             </if>
             <if test="updateTime != null">
-                now(),
+                #{updateTime,jdbcType=TIMESTAMP},
             </if>
         </trim>
     </insert>
@@ -144,6 +170,9 @@
             </if>
             <if test="detail != null">
                 detail = #{detail,jdbcType=VARCHAR},
+            </if>
+            <if test="answer != null">
+                answer = #{answer,jdbcType=VARCHAR},
             </if>
             <if test="golden != null">
                 golden = #{golden,jdbcType=INTEGER},
@@ -163,14 +192,23 @@
             <if test="scriptUrl != null">
                 script_url = #{scriptUrl,jdbcType=VARCHAR},
             </if>
+            <if test="checkUrl != null">
+                check_url = #{checkUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="userUploadPath != null">
+                user_upload_path = #{userUploadPath,jdbcType=VARCHAR},
+            </if>
+            <if test="logPath != null">
+                log_path = #{logPath,jdbcType=VARCHAR},
+            </if>
             <if test="port != null">
                 port = #{port,jdbcType=INTEGER},
             </if>
             <if test="createTime != null">
-                create_time = now(),
+                create_time = #{createTime,jdbcType=TIMESTAMP},
             </if>
             <if test="updateTime != null">
-                update_time = now(),
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
             </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
@@ -180,15 +218,19 @@
     set category_id = #{categoryId,jdbcType=INTEGER},
       name = #{name,jdbcType=VARCHAR},
       detail = #{detail,jdbcType=VARCHAR},
+      answer = #{answer,jdbcType=VARCHAR},
       golden = #{golden,jdbcType=INTEGER},
       status = #{status,jdbcType=BIT},
       memory_limit = #{memoryLimit,jdbcType=VARCHAR},
       cup_limit = #{cupLimit,jdbcType=DOUBLE},
       docker_image = #{dockerImage,jdbcType=VARCHAR},
       script_url = #{scriptUrl,jdbcType=VARCHAR},
+      check_url = #{checkUrl,jdbcType=VARCHAR},
+      user_upload_path = #{userUploadPath,jdbcType=VARCHAR},
+      log_path = #{logPath,jdbcType=VARCHAR},
       port = #{port,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = now()
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
     <select id="checkId" parameterType="int" resultType="int">
@@ -214,4 +256,23 @@
         from hackerdefender_challenge
         where id=#{challengeId}
     </select>
+    <select id="selectCmdByid" resultType="string" parameterType="int">
+        select
+        log_path
+        from hackerdefender_challenge
+        where id=#{challengeId}
+    </select>
+    <select id="selectCheckByid" resultType="string" parameterType="int">
+        select
+        check_url
+        from hackerdefender_challenge
+        where id=#{challengeId}
+    </select>
+    <select id="selectRemotePathByid" resultType="string" parameterType="int">
+        select
+        user_upload_path
+        from hackerdefender_challenge
+        where id=#{challengeId}
+    </select>
+
 </mapper>

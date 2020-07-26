@@ -44,7 +44,9 @@ public class HttpClientUtil {
             put.setConfig(requestConfig);
             HttpResponse httpResponse = httpClient.execute(put);
             int code = httpResponse.getStatusLine().getStatusCode();
-            System.out.println(code);
+            if (code != 200) {
+                log.error("修改frp失败" + url + str);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

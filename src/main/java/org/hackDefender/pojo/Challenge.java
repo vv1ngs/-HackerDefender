@@ -11,6 +11,8 @@ public class Challenge {
 
     private String detail;
 
+    private String answer;
+
     private Integer golden;
 
     private Boolean status;
@@ -23,23 +25,33 @@ public class Challenge {
 
     private String scriptUrl;
 
+    private String checkUrl;
+
+    private String userUploadPath;
+
+    private String logPath;
+
     private Integer port;
 
     private Date createTime;
 
     private Date updateTime;
 
-    public Challenge(Integer id, Integer categoryId, String name, String detail, Integer golden, Boolean status, String memoryLimit, Double cupLimit, String dockerImage, String scriptUrl, Integer port, Date createTime, Date updateTime) {
+    public Challenge(Integer id, Integer categoryId, String name, String detail, String answer, Integer golden, Boolean status, String memoryLimit, Double cupLimit, String dockerImage, String scriptUrl, String checkUrl, String userUploadPath, String logPath, Integer port, Date createTime, Date updateTime) {
         this.id = id;
         this.categoryId = categoryId;
         this.name = name;
         this.detail = detail;
+        this.answer = answer;
         this.golden = golden;
         this.status = status;
         this.memoryLimit = memoryLimit;
         this.cupLimit = cupLimit;
         this.dockerImage = dockerImage;
         this.scriptUrl = scriptUrl;
+        this.checkUrl = checkUrl;
+        this.userUploadPath = userUploadPath;
+        this.logPath = logPath;
         this.port = port;
         this.createTime = createTime;
         this.updateTime = updateTime;
@@ -79,6 +91,14 @@ public class Challenge {
 
     public void setDetail(String detail) {
         this.detail = detail == null ? null : detail.trim();
+    }
+
+    public String getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer == null ? null : answer.trim();
     }
 
     public Integer getGolden() {
@@ -127,6 +147,30 @@ public class Challenge {
 
     public void setScriptUrl(String scriptUrl) {
         this.scriptUrl = scriptUrl == null ? null : scriptUrl.trim();
+    }
+
+    public String getCheckUrl() {
+        return checkUrl;
+    }
+
+    public void setCheckUrl(String checkUrl) {
+        this.checkUrl = checkUrl == null ? null : checkUrl.trim();
+    }
+
+    public String getUserUploadPath() {
+        return userUploadPath;
+    }
+
+    public void setUserUploadPath(String userUploadPath) {
+        this.userUploadPath = userUploadPath == null ? null : userUploadPath.trim();
+    }
+
+    public String getLogPath() {
+        return logPath;
+    }
+
+    public void setLogPath(String logPath) {
+        this.logPath = logPath == null ? null : logPath.trim();
     }
 
     public Integer getPort() {

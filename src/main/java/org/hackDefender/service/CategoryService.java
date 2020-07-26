@@ -17,4 +17,6 @@ public interface CategoryService {
     ServerResponse<List<Category>> updateCategory(Integer categoryId, String categoryName);
 
     ServerResponse<List<Category>> delCategory(Integer categoryId);
+
+    ServerResponse selectCategoryAndChildrenById(Integer parentId);
 }

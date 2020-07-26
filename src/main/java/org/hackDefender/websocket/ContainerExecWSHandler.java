@@ -3,6 +3,7 @@ package org.hackDefender.websocket;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 import org.hackDefender.util.DockerUtil;
+import org.hackDefender.util.PropertiesUtil;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -22,18 +23,30 @@ import java.util.Map;
 
 public class ContainerExecWSHandler extends TextWebSocketHandler {
     private Map<String, ExecSession> execSessionMap = new HashMap<>();
+    private static final String dockerApi1 = PropertiesUtil.getProperty("docker_APIUrl1");
+    private static final String dockerApi2 = PropertiesUtil.getProperty("docker_APIUrl2");
+    private static final String ip1 = "120.78.200.182";
+    private static final String ip2 = "47.107.46.43";
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        String ip = "127.0.0.1";
         String containerId = session.getAttributes().get("containerId").toString();
+
         /*防止爆破*/
-        if (containerId.length() != 32) {
+        if (containerId.length() < 32) {
             return;
         }
-        String execId = DockerUtil.execContainer(containerId);
-        Socket socket = connectExec(ip, execId);
-        getExecMessage(session, ip, containerId, socket);
+        String execId;
+        if (DockerUtil.checkUrl(containerId)) {
+            execId = DockerUtil.execContainer(containerId, dockerApi1);
+            Socket socket = connectExec(ip1, execId);
+            getExecMessage(session, ip1, containerId, socket);
+        } else {
+            execId = DockerUtil.execContainer(containerId, dockerApi2);
+            Socket socket = connectExec(ip2, execId);
+            getExecMessage(session, ip2, containerId, socket);
+        }
+
     }
 
     private Socket connectExec(String ip, String execId) throws IOException {

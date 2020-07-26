@@ -32,6 +32,7 @@ public class ManagerChallengeController {
 
     @ResponseBody
     @RequestMapping(value = "/list_container.do", method = RequestMethod.GET)
+    @RequestLogin(desc = Permission.REQUEST_ADMIN)
     public ServerResponse<PageInfo> getContainerList(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pagerSize", defaultValue = "10") int pagerSize) {
         return containerService.getContainerList(pageNum, pagerSize);
     }
@@ -39,15 +40,23 @@ public class ManagerChallengeController {
 
     @ResponseBody
     @RequestMapping(value = "/upload_script.do", method = RequestMethod.POST)
+    @RequestLogin(desc = Permission.REQUEST_ADMIN)
     public ServerResponse uploadScript(@RequestParam(value = "script_file") MultipartFile file, Integer challengeId, HttpServletRequest req) {
         String path = req.getSession().getServletContext().getRealPath("upload");
-        return challengeService.uploadScript(file, challengeId, path);
+        return challengeService.uploadScript(file, challengeId, path, 0);
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/upload_check.do", method = RequestMethod.POST)
+    @RequestLogin(desc = Permission.REQUEST_ADMIN)
+    public ServerResponse uploadCheckScript(@RequestParam(value = "check_file") MultipartFile file, Integer challengeId, HttpServletRequest req) {
+        String path = req.getSession().getServletContext().getRealPath("upload");
+        return challengeService.uploadScript(file, challengeId, path, 1);
+    }
 
     @ResponseBody
     @RequestMapping(value = "/add_challenge.do", method = RequestMethod.POST)
-    public ServerResponse<Challenge> addorUpdateChallenge(Challenge challenge) {
+    public ServerResponse<Challenge> addOrUpdateChallenge(Challenge challenge) {
         return challengeService.saveOrUpdateChallenge(challenge);
     }
 }

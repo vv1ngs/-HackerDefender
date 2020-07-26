@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 public class CookieUtil {
-    private final static String COOKIE_DOMAIN = "localhost";
+    private final static String COOKIE_DOMAIN = "hackerdefender.top";
     private final static String COOKIE_NAME = "login_token";
 
     public static String readLoginToken(HttpServletRequest request) {
@@ -56,7 +56,7 @@ public class CookieUtil {
 
     public static Boolean frequency_limit(String uuid) {
         if (StringUtils.isEmpty(RedisPoolSharedUtil.get(uuid + "_limit"))) {
-            RedisPoolSharedUtil.setEx(uuid + "_limit", "60", 60);
+            RedisPoolSharedUtil.setEx(uuid + "_limit", "10", 10);
             return false;
         } else {
             return true;

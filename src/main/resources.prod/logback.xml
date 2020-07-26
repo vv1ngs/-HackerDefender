@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="60 seconds" debug="false">
+    <property name="LOG_HOME" value="${CATALINA_HOME}/logs"></property>
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoding>UTF-8</encoding>
         <encoder>
@@ -11,10 +12,10 @@
     </appender>
 
     <appender name="hackerDefender" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File></File>
+        <File>${LOG_HOME}/hackerDefender.log</File>
         <!--<File>/usr/local/apache-tomcat-8.5.54/logs/hackerDefender.log</File>-->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/hackerDefender.%d{yyyy-MM-dd}.gz</fileNamePattern>
+            <fileNamePattern>${LOG_HOME}/hackerDefender.%d{yyyy-MM-dd}.gz</fileNamePattern>
             <append>true</append>
             <maxHistory>10</maxHistory>
         </rollingPolicy>
@@ -25,9 +26,9 @@
 
 
     <appender name="error" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File></File>
+        <File>${LOG_HOME}/hackerDefender.log</File>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>/error.log.%d{yyyy-MM-dd}.gz</fileNamePattern>
+            <fileNamePattern>${LOG_HOME}/error.log.%d{yyyy-MM-dd}.gz</fileNamePattern>
             <append>true</append>
             <maxHistory>10</maxHistory>
         </rollingPolicy>
@@ -42,8 +43,9 @@
     </appender>
 
     <logger name="org.hackDefender" additivity="false" level="INFO">
-        <appender-ref ref="mall"/>
+        <appender-ref ref="hackerDefender"/>
         <appender-ref ref="console"/>
+        <appender-ref ref="error"/>
     </logger>
 
 

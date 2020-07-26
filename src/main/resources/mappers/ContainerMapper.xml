@@ -162,7 +162,7 @@
         <include refid="Base_Column_List"/>
         from challenge_container
         where
-        <![CDATA[ create_time <= #{date}]]>
+        <![CDATA[ update_time <= #{date}]]>
     </select>
     <select id="selectByUidAndCId" parameterType="int" resultMap="BaseResultMap">
         select

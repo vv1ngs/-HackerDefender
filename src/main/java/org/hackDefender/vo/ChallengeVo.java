@@ -9,7 +9,16 @@ public class ChallengeVo {
     private String topCategoryName;
     private String categoryName;
     private String detail;
+    private String answer;
     private Integer golden;
+
+    public String getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
 
     public Integer getId() {
         return id;

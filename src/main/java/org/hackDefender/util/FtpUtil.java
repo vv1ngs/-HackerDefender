@@ -34,7 +34,7 @@ public class FtpUtil {
 
     public static boolean uploadFile(List<File> fileList) throws IOException {
         FtpUtil ftpUtil = new FtpUtil(ftpIP, 21, ftpUser, ftpPassword);
-        boolean result = ftpUtil.uploadFile("script", fileList);
+        boolean result = ftpUtil.uploadFile("/", fileList);
         logger.info("开始连接ftp服务器，结束上传上传结果:{}");
         return result;
     }
@@ -48,11 +48,10 @@ public class FtpUtil {
                 ftpClient.setBufferSize(1024);
                 ftpClient.setControlEncoding("UTF-8");
                 ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-                ftpClient.enterLocalActiveMode();
+                ftpClient.enterLocalPassiveMode();
                 for (File file : fileList) {
                     fis = new FileInputStream(file);
                     ftpClient.storeFile(file.getName(), fis);
-
                 }
             } catch (IOException e) {
                 logger.error("上传文件异常", e);

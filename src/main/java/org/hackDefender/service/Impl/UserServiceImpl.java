@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.hackDefender.common.Const;
 import org.hackDefender.common.ResponseCode;
 import org.hackDefender.common.ServerResponse;
-import org.hackDefender.dao.ChallengeMapper;
 import org.hackDefender.dao.ContainerMapper;
 import org.hackDefender.dao.UserMapper;
 import org.hackDefender.pojo.User;
@@ -24,8 +23,6 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
     @Autowired
     private ContainerMapper containerMapper;
-    @Autowired
-    private ChallengeMapper challengeMapper;
 
     @Override
     public ServerResponse<User> login(String username, String password) {
@@ -95,7 +92,7 @@ public class UserServiceImpl implements UserService {
 
         User user = userMapper.selectByPrimaryKey(id);
         if (user == null) {
-            return ServerResponse.createByErrorCode(ResponseCode.NEED_ADD_CONTAINER.getCode(), "无该用户，请重新登录");
+            return ServerResponse.createByErrorMessage("无该用户，请重新登录");
         }
         user.setPassword(StringUtils.EMPTY);
         return ServerResponse.createBySuccess(user);

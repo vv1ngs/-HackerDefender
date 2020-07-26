@@ -82,7 +82,7 @@ public class UserController {
         return userService.resetPassword((User) httpServletRequest.getAttribute("user"), passwordOld, passwordNew);
     }
 
-    @RequestMapping(value = "get_user_info.do", method = RequestMethod.POST)
+    @RequestMapping(value = "get_user_info.do", method = RequestMethod.GET)
     @ResponseBody
     @RequestLogin(desc = Permission.REQUEST_LOGIN)
     public ServerResponse<User> getUserInfo(HttpServletRequest httpServletRequest) {
@@ -101,4 +101,5 @@ public class UserController {
         }*/
         return serverResponse;
     }
+    
 }

@@ -24,4 +24,10 @@ public interface ChallengeMapper {
     Challenge selectByName(String name);
 
     String selectScript(Integer challengeId);
+
+    String selectCmdByid(Integer challengeId);
+
+    String selectCheckByid(Integer challengeId);
+
+    String selectRemotePathByid(Integer challengeId);
 }

@@ -1,5 +1,7 @@
 package org.hackDefender.service.Impl;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.hackDefender.common.ServerResponse;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author vvings
@@ -72,5 +75,30 @@ public class CategoryServiceImpl implements CategoryService {
         }
         categoryMapper.deleteByPrimaryKey(categoryId);
         return ServerResponse.createBySuccess("删除成功");
+    }
+
+    @Override
+    public ServerResponse selectCategoryAndChildrenById(Integer parentId) {
+        Set<Category> categorySet = Sets.newHashSet();
+        findChildCategory(categorySet, parentId);
+        List<Integer> categoryIdList = Lists.newArrayList();
+        if (parentId != null) {
+            for (Category categoryItem : categorySet) {
+                categoryIdList.add(categoryItem.getId());
+            }
+        }
+        return ServerResponse.createBySuccess(categoryIdList);
+    }
+
+    private Set<Category> findChildCategory(Set<Category> categorySet, Integer categoryId) {
+        Category category = categoryMapper.selectByPrimaryKey(categoryId);
+        if (category != null) {
+            categorySet.add(category);
+        }
+        List<Category> categoryList = categoryMapper.selectChildrenByCategoryById(categoryId);
+        for (Category categoryItem : categoryList) {
+            findChildCategory(categorySet, categoryItem.getId());
+        }
+        return categorySet;
     }
 }
